@@ -1,7 +1,7 @@
 const express = require("express");
 const Category = require("../models/Category");
-const isAdmin = require("../middleware/isAdmin");
-
+const adminAuth = require("../middleware/adminAuth");
+const upload = require("../middleware/upload");
 const router = express.Router();
 
 /* CREATE CATEGORY (ADMIN ONLY) */
@@ -19,7 +19,7 @@ router.get("/", async (req, res) => {
 });
 
 module.exports = router;
-const adminAuth = require("../middleware/adminAuth");
+
 
 router.post("/", adminAuth, upload.single("image"), async (req, res) => {
   // add product
