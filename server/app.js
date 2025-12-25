@@ -2,12 +2,11 @@ const express = require("express");
 const mongoose = require("mongoose");
 const session = require("express-session");
 const path = require("path");
-
 require("dotenv").config();
 
 const app = express();
 
-// middleware
+/* Middleware */
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -17,16 +16,16 @@ app.use(session({
   saveUninitialized: false
 }));
 
-// MongoDB
+/* MongoDB */
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB connected"))
   .catch(err => console.log("MongoDB error:", err));
 
-// 🔥 SERVE PUBLIC FOLDER (THIS IS CRITICAL)
+/* Static files */
 app.use(express.static(path.join(__dirname, "public")));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// API routes
+/* API Routes */
 app.use("/api/admin", require("./routes/admin"));
 app.use("/api/products", require("./routes/products"));
 app.use("/api/categories", require("./routes/categories"));
@@ -34,11 +33,12 @@ app.use("/api/goldrate", require("./routes/goldrate"));
 app.use("/api/sliders", require("./routes/sliders"));
 app.use("/api/tagline", require("./routes/tagline"));
 
-// Home page
+/* Frontend */
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
+/* Server start — ALWAYS LAST */
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
