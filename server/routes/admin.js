@@ -19,16 +19,15 @@ router.post("/create", async (req, res) => {
 router.post("/login", async (req, res) => {
   const { username, password } = req.body;
 
-  if (username === process.env.ADMIN_USER &&
-      password === process.env.ADMIN_PASS) {
+  const admin = await Admin.findOne({ username });
+  if (!admin) return res.status(401).json({ message: "Invalid credentials" });
 
-    req.session.admin = true;
-    res.json({ message: "Login successful" });
-  } else {
-    res.status(401).json({ message: "Invalid credentials" });
-  }
+  const match = await bcrypt.compare(password, admin.password);
+  if (!match) return res.status(401).json({ message: "Invalid credentials" });
+
+  req.session.admin = true;
+  res.json({ message: "Login successful" });
 });
-
 
 /* Check auth */
 router.get("/check", (req, res) => {

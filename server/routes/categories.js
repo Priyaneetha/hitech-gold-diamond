@@ -1,10 +1,10 @@
 const express = require("express");
 const Category = require("../models/Category");
-const adminAuth = require("../middleware/adminAuth");
-const upload = require("../middleware/upload");
+const isAdmin = require("../middleware/isAdmin");
+
 const router = express.Router();
 
-/* CREATE CATEGORY (ADMIN ONLY) */
+/* CREATE CATEGORY */
 router.post("/", isAdmin, async (req, res) => {
   const { name } = req.body;
   const category = new Category({ name });
@@ -12,19 +12,10 @@ router.post("/", isAdmin, async (req, res) => {
   res.send("Category created");
 });
 
-/* GET ALL CATEGORIES (PUBLIC) */
+/* GET ALL CATEGORIES */
 router.get("/", async (req, res) => {
   const categories = await Category.find();
   res.json(categories);
 });
 
 module.exports = router;
-
-
-router.post("/", adminAuth, upload.single("image"), async (req, res) => {
-  // add product
-});
-
-router.delete("/:id", adminAuth, async (req, res) => {
-  // delete product
-});

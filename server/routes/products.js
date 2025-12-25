@@ -21,7 +21,7 @@ router.post("/", isAdmin, upload.single("image"), async (req, res) => {
   res.send("Product created");
 });
 
-/* GET ALL PRODUCTS (PUBLIC) */
+/* GET PRODUCTS */
 router.get("/", async (req, res) => {
   const products = await Product.find().populate("category");
   res.json(products);
@@ -34,13 +34,3 @@ router.delete("/:id", isAdmin, async (req, res) => {
 });
 
 module.exports = router;
-const adminAuth = require("../middleware/adminAuth");
-
-router.post("/", adminAuth, upload.single("image"), async (req, res) => {
-  // add product
-});
-
-router.delete("/:id", adminAuth, async (req, res) => {
-  // delete product
-});
-

@@ -5,38 +5,28 @@ const isAdmin = require("../middleware/isAdmin");
 
 const router = express.Router();
 
-/* ADD SLIDE (ADMIN ONLY) */
+/* ADD SLIDE */
 router.post("/", isAdmin, upload.single("image"), async (req, res) => {
-  const { order } = req.body;
-
   const slide = new Slider({
     image: `/uploads/${req.file.filename}`,
-    order: order || 0
+    order: req.body.order || 0,
+    active: true
   });
 
   await slide.save();
   res.send("Slide added");
 });
 
-/* GET SLIDES (PUBLIC) */
+/* GET SLIDES */
 router.get("/", async (req, res) => {
   const slides = await Slider.find({ active: true }).sort({ order: 1 });
   res.json(slides);
 });
 
-/* DELETE SLIDE (ADMIN ONLY) */
+/* DELETE SLIDE */
 router.delete("/:id", isAdmin, async (req, res) => {
   await Slider.findByIdAndDelete(req.params.id);
   res.send("Slide deleted");
 });
 
 module.exports = router;
-const adminAuth = require("../middleware/adminAuth");
-
-router.post("/", adminAuth, upload.single("image"), async (req, res) => {
-  // add product
-});
-
-router.delete("/:id", adminAuth, async (req, res) => {
-  // delete product
-});
