@@ -137,9 +137,24 @@ body {
   font-family: "Playfair Display", "Manjari", "Kartika", serif;
   text-shadow: 0 3px 10px rgba(42, 7, 26, 0.8), 0 1px 3px rgba(0, 0, 0, 0.5);
   letter-spacing: 0.5px;
-  display: block;
+  display: inline-block;
+  position: relative;
+  padding-bottom: 12px;
   animation: heroTextUp 1.2s cubic-bezier(0.23, 1, 0.32, 1) forwards;
 }
+
+.tagline-malayalam::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 70px; /* Centered elegant underline width */
+  height: 1.5px;
+  background: var(--gold); /* Gleaming gold underline */
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+}
+
 
 @keyframes heroTextUp {
   from {
