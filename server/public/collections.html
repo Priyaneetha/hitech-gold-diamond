@@ -1,61 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Collections | Hi-Tech Gold & Diamonds</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-<header class="navbar">
-  <div class="nav-left">
-    <img src="logo.png" class="logo">
-    <span class="brand">Hi-Tech Gold & Diamonds</span>
-  </div>
+  <header class="navbar">
+    <div class="nav-left">
+      <img src="logo.png" class="logo">
+      <span class="brand">Hi-Tech Gold & Diamonds</span>
+    </div>
 
-  <nav class="nav-links">
-    <a href="/">Home</a>
-    <a href="collections.html">Collections</a>
-  </nav>
-</header>
+    <nav class="nav-links">
+      <a href="/">Home</a>
+      <a href="collections.html">Collections</a>
+    </nav>
+  </header>
 
-<section class="collections">
-  <div class="collections-header">
-    <h2>Our Collections</h2>
-    <p class="subtitle">Explore our exquisite range of curated gold and diamond jewelry</p>
-  </div>
+  <section class="collections">
+    <div class="collections-header">
+      <h2>Our Collections</h2>
+      <p class="subtitle">Explore our exquisite range of curated gold and diamond jewelry</p>
+    </div>
 
-  <div class="filter-wrapper fade-in">
-    <div class="filter-top-row">
-      <div class="search-bar-container">
-        <span class="search-icon">🔍</span>
-        <input type="text" id="searchInput" placeholder="Search by name, model no. or keyword...">
+    <div class="filter-wrapper fade-in">
+      <div class="filter-top-row">
+        <div class="search-bar-container">
+          <span class="search-icon"></span>
+          <input type="text" id="searchInput" placeholder="Search by name, model no. or keyword...">
+        </div>
+
+        <div class="sort-control">
+          <select id="sortSelect" aria-label="Sort Collections">
+            <option value="default">Sort by: Featured</option>
+            <option value="price-asc">Price: Low to High</option>
+            <option value="price-desc">Price: High to Low</option>
+            <option value="name-asc">Name: A to Z</option>
+            <option value="name-desc">Name: Z to A</option>
+          </select>
+        </div>
       </div>
-      
-      <div class="sort-control">
-        <select id="sortSelect" aria-label="Sort Collections">
-          <option value="default">Sort by: Featured</option>
-          <option value="price-asc">Price: Low to High</option>
-          <option value="price-desc">Price: High to Low</option>
-          <option value="name-asc">Name: A to Z</option>
-          <option value="name-desc">Name: Z to A</option>
-        </select>
+
+      <div class="category-pills-row">
+        <div class="category-pills" id="categoryPills">
+          <!-- Dynamically loaded category pills -->
+          <button class="category-pill active" data-category="all">All Collections</button>
+        </div>
       </div>
     </div>
-    
-    <div class="category-pills-row">
-      <div class="category-pills" id="categoryPills">
-        <!-- Dynamically loaded category pills -->
-        <button class="category-pill active" data-category="all">All Collections</button>
-      </div>
-    </div>
-  </div>
 
-  <div class="grid" id="collectionGrid"></div>
-</section>
+    <div class="grid" id="collectionGrid"></div>
+  </section>
 
-<script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
-</html>
+
+</html>

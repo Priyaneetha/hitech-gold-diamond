@@ -273,15 +273,27 @@ function submitEditProduct() {
     method: "PUT",
     body: data
   })
-  .then(res => {
-    if (!res.ok) throw new Error("Unauthorized or Bad Request");
+  .then(async res => {
+    if (!res.ok) {
+      let errMsg = "Failed to update product details.";
+      try {
+        const errJson = await res.json();
+        errMsg = errJson.message || errJson.error || errMsg;
+      } catch (e) {
+        try {
+          const text = await res.text();
+          if (text) errMsg = text;
+        } catch (e2) {}
+      }
+      throw new Error(errMsg);
+    }
     alert("Product updated successfully!");
     closeEditModal();
     loadProducts();
   })
   .catch(err => {
     console.error("Update product error:", err);
-    alert("Failed to update product details.");
+    alert(err.message || "Failed to update product details.");
   });
 }
 
