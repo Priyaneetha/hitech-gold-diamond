@@ -26,6 +26,7 @@ const demoDb = {
       modelNo: "HT-2045",
       category: { _id: "cat_1", name: "Necklaces" },
       price: 145000,
+      inStock: true,
       description: "A traditional premium antique gold choker embellished with precious gemstones. Handcrafted for the elegant bride.",
       image: "/logo.png"
     },
@@ -35,6 +36,7 @@ const demoDb = {
       modelNo: "HT-5582",
       category: { _id: "cat_2", name: "Bangles" },
       price: 36000,
+      inStock: true,
       description: "Minimalistic solid gold bangle suitable for daily wear and modern styling.",
       image: "/logo.png"
     }

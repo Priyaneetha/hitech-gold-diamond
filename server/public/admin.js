@@ -136,18 +136,29 @@ function loadProducts() {
       if (prodList) {
         prodList.innerHTML = "";
         if (products.length === 0) {
-          prodList.innerHTML = "<tr><td colspan='6' style='text-align:center;'>No products found.</td></tr>";
+          prodList.innerHTML = "<tr><td colspan='7' style='text-align:center;'>No products found.</td></tr>";
         } else {
           products.forEach(p => {
             const catName = p.category ? p.category.name : "<em style='color:red;'>No Category</em>";
             const imageTag = p.image ? `<img src="${p.image}" class="thumbnail-img">` : "No Image";
+            
+            // Check status – default to true if undefined
+            const inStock = p.inStock !== false;
+            const badgeClass = inStock ? "badge-instock" : "badge-outofstock";
+            const badgeText = inStock ? "In Stock" : "Out of Stock";
+            
             prodList.innerHTML += `
               <tr>
                 <td>${imageTag}</td>
                 <td><strong>${p.name}</strong></td>
                 <td>${p.modelNo || "-"}</td>
                 <td>${catName}</td>
-                <td>₹ ${p.price}</td>
+                <td>₹ ${Number(p.price).toLocaleString("en-IN")}</td>
+                <td>
+                  <span class="badge-stock ${badgeClass}" onclick="toggleProductStock('${p._id}', ${inStock})">
+                    ${badgeText}
+                  </span>
+                </td>
                 <td>
                   <button class="btn-danger-sm" onclick="deleteProduct('${p._id}')">Delete</button>
                 </td>
@@ -160,6 +171,23 @@ function loadProducts() {
     .catch(err => console.error("Error loading products:", err));
 }
 
+function toggleProductStock(id, currentStatus) {
+  const newStatus = !currentStatus;
+  fetch(`/api/products/${id}/availability`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ inStock: newStatus })
+  })
+  .then(res => {
+    if (!res.ok) throw new Error("Unauthorized or Bad Request");
+    loadProducts(); // reload catalog to reflect toggled status
+  })
+  .catch(err => {
+    console.error("Failed to toggle stock status:", err);
+    alert("Failed to toggle availability status");
+  });
+}
+
 function addProduct() {
   const name = document.getElementById("name").value.trim();
   const modelNo = document.getElementById("modelNo").value.trim();
@@ -167,6 +195,8 @@ function addProduct() {
   const price = document.getElementById("price").value;
   const description = document.getElementById("description").value.trim();
   const image = document.getElementById("image").files[0];
+  const inStockCheckbox = document.getElementById("inStock");
+  const inStock = inStockCheckbox ? inStockCheckbox.checked : true;
 
   if (!name || !category || !price) {
     alert("Name, category, and price are required.");
@@ -179,6 +209,7 @@ function addProduct() {
   data.append("category", category);
   data.append("price", price);
   data.append("description", description);
+  data.append("inStock", inStock);
   if (image) {
     data.append("image", image);
   }
@@ -197,10 +228,12 @@ function addProduct() {
     document.getElementById("price").value = "";
     document.getElementById("description").value = "";
     document.getElementById("image").value = "";
+    if (inStockCheckbox) inStockCheckbox.checked = true;
     loadProducts();
   })
   .catch(() => alert("Failed to add product (unauthorized or server error)"));
 }
+
 
 function deleteProduct(id) {
   if (!confirm("Are you sure you want to delete this product?")) return;

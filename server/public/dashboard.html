@@ -163,13 +163,22 @@
         <label for="description" style="display:block; margin-bottom: 5px; font-weight:500;">Description</label>
         <textarea id="description" rows="3" placeholder="Describe the item's specifications..."></textarea>
 
-        <label for="image" style="display:block; margin-bottom: 5px; font-weight:500;">Product Image</label>
-        <input type="file" id="image" accept="image/*">
+        <div class="row" style="align-items: center; margin-top: 15px; margin-bottom: 15px;">
+          <div style="flex: 1;">
+            <label for="image" style="display:block; margin-bottom: 5px; font-weight:500;">Product Image</label>
+            <input type="file" id="image" accept="image/*">
+          </div>
+          <div style="flex: 1; padding-left: 20px; display: flex; align-items: center;">
+            <input type="checkbox" id="inStock" checked style="width: auto; height: 18px; margin-right: 8px; cursor: pointer;">
+            <label for="inStock" style="font-weight: 500; cursor: pointer; user-select: none;">Item In Stock / Available</label>
+          </div>
+        </div>
 
         <button class="primary" onclick="addProduct()">Add Product</button>
       </div>
 
       <h3>Product Catalog</h3>
+      <p class="hint" style="margin-top:-10px; margin-bottom:15px; font-size:12px;">Tip: Click on the status badges in the list to toggle product availability in real-time.</p>
       <table style="width: 100%; border-collapse: collapse;">
         <thead>
           <tr>
@@ -178,16 +187,18 @@
             <th>Model No</th>
             <th>Category</th>
             <th>Price</th>
+            <th>Status</th>
             <th>Action</th>
           </tr>
         </thead>
         <tbody id="productListTable">
           <tr>
-            <td colspan="6" style="text-align: center; padding: 20px;">Loading product catalog...</td>
+            <td colspan="7" style="text-align: center; padding: 20px;">Loading product catalog...</td>
           </tr>
         </tbody>
       </table>
     </div>
+
 
   </div>
 

@@ -13,7 +13,7 @@ const router = express.Router();
 /* CREATE PRODUCT */
 router.post("/", isAdmin, upload.single("image"), async (req, res, next) => {
   try {
-    const { name, modelNo, category, price, description } = req.body;
+    const { name, modelNo, category, price, description, inStock } = req.body;
 
     if (!name || !category || !price) {
       // Clean up uploaded file if validation failed
@@ -22,6 +22,8 @@ router.post("/", isAdmin, upload.single("image"), async (req, res, next) => {
       }
       return res.status(400).json({ message: "Name, category, and price are required." });
     }
+
+    const isAvailable = inStock === undefined || inStock === "true" || inStock === true;
 
     if (mongoose.connection.readyState !== 1) {
       console.log("DB Offline: Creating Product in Demo Mode");
@@ -40,7 +42,8 @@ router.post("/", isAdmin, upload.single("image"), async (req, res, next) => {
         category: foundCategory,
         price: Number(price),
         description: description || "",
-        image: req.file ? `/uploads/${req.file.filename}` : ""
+        image: req.file ? `/uploads/${req.file.filename}` : "",
+        inStock: isAvailable
       };
       
       demoDb.products.push(newProduct);
@@ -70,7 +73,8 @@ router.post("/", isAdmin, upload.single("image"), async (req, res, next) => {
       category,
       price: Number(price),
       description,
-      image: req.file ? `/uploads/${req.file.filename}` : ""
+      image: req.file ? `/uploads/${req.file.filename}` : "",
+      inStock: isAvailable
     });
 
     await product.save();
@@ -79,6 +83,7 @@ router.post("/", isAdmin, upload.single("image"), async (req, res, next) => {
     next(err);
   }
 });
+
 
 /* GET ALL PRODUCTS */
 router.get("/", async (req, res, next) => {
@@ -166,6 +171,42 @@ router.delete("/:id", isAdmin, async (req, res, next) => {
 
     await Product.findByIdAndDelete(req.params.id);
     res.send("Product deleted");
+  } catch (err) {
+    next(err);
+  }
+});
+
+/* TOGGLE/UPDATE AVAILABILITY */
+router.patch("/:id/availability", isAdmin, async (req, res, next) => {
+  try {
+    const { inStock } = req.body;
+    const isAvailable = inStock === true || inStock === "true";
+
+    if (mongoose.connection.readyState !== 1) {
+      console.log("DB Offline: Updating stock status in Demo Mode");
+      const product = demoDb.products.find(p => p._id === req.params.id);
+      if (!product) {
+        return res.status(404).json({ message: "Product not found." });
+      }
+      product.inStock = isAvailable;
+      return res.json({ message: "Availability updated successfully", product });
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ message: "Invalid product ID format." });
+    }
+
+    const product = await Product.findByIdAndUpdate(
+      req.params.id,
+      { inStock: isAvailable },
+      { new: true }
+    );
+    
+    if (!product) {
+      return res.status(404).json({ message: "Product not found." });
+    }
+
+    res.json({ message: "Availability updated successfully", product });
   } catch (err) {
     next(err);
   }

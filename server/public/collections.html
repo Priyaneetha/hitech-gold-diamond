@@ -28,32 +28,27 @@
   </div>
 
   <div class="filter-wrapper fade-in">
-    <div class="search-bar-container">
-      <span class="search-icon">🔍</span>
-      <input type="text" id="searchInput" placeholder="Search by name, model no. or keyword...">
+    <div class="filter-top-row">
+      <div class="search-bar-container">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="Search by name, model no. or keyword...">
+      </div>
+      
+      <div class="sort-control">
+        <select id="sortSelect" aria-label="Sort Collections">
+          <option value="default">Sort by: Featured</option>
+          <option value="price-asc">Price: Low to High</option>
+          <option value="price-desc">Price: High to Low</option>
+          <option value="name-asc">Name: A to Z</option>
+          <option value="name-desc">Name: Z to A</option>
+        </select>
+      </div>
     </div>
     
-    <div class="filter-controls-row">
+    <div class="category-pills-row">
       <div class="category-pills" id="categoryPills">
         <!-- Dynamically loaded category pills -->
         <button class="category-pill active" data-category="all">All Collections</button>
-      </div>
-
-      <div class="dropdowns-group">
-        <div class="price-range-control">
-          <label for="priceRange">Max Price: <span id="priceLabel">₹ —</span></label>
-          <input type="range" id="priceRange" min="0" max="1000000" step="5000" value="1000000">
-        </div>
-
-        <div class="sort-control">
-          <select id="sortSelect" aria-label="Sort Collections">
-            <option value="default">Sort by: Featured</option>
-            <option value="price-asc">Price: Low to High</option>
-            <option value="price-desc">Price: High to Low</option>
-            <option value="name-asc">Name: A to Z</option>
-            <option value="name-desc">Name: Z to A</option>
-          </select>
-        </div>
       </div>
     </div>
   </div>

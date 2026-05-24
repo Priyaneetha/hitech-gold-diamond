@@ -16,14 +16,11 @@ if (document.getElementById("collectionGrid")) {
   let activeCategory = "all";
   let searchQuery = "";
   let currentSort = "default";
-  let maxPriceValue = 1000000;
   
   const grid = document.getElementById("collectionGrid");
   const pillsContainer = document.getElementById("categoryPills");
   const searchInput = document.getElementById("searchInput");
   const sortSelect = document.getElementById("sortSelect");
-  const priceRange = document.getElementById("priceRange");
-  const priceLabel = document.getElementById("priceLabel");
 
   Promise.all([
     fetch("/api/products").then(res => res.json()),
@@ -68,32 +65,6 @@ if (document.getElementById("collectionGrid")) {
       });
     }
 
-    // Set up price range slider dynamically
-    if (priceRange) {
-      if (allProducts.length > 0) {
-        const prices = allProducts.map(p => p.price);
-        const absoluteMax = Math.max(...prices, 100000);
-        priceRange.max = absoluteMax;
-        priceRange.value = absoluteMax;
-        maxPriceValue = absoluteMax;
-        if (priceLabel) {
-          priceLabel.innerText = `₹ ${absoluteMax.toLocaleString("en-IN")}`;
-        }
-      } else {
-        if (priceLabel) {
-          priceLabel.innerText = `₹ 0`;
-        }
-      }
-
-      priceRange.addEventListener("input", (e) => {
-        maxPriceValue = Number(e.target.value);
-        if (priceLabel) {
-          priceLabel.innerText = `₹ ${maxPriceValue.toLocaleString("en-IN")}`;
-        }
-        filterAndRenderProducts();
-      });
-    }
-
     // Initial render
     filterAndRenderProducts();
   })
@@ -114,10 +85,7 @@ if (document.getElementById("collectionGrid")) {
       const descMatch = p.description ? p.description.toLowerCase().includes(searchQuery) : false;
       const matchesSearch = searchQuery === "" || nameMatch || modelMatch || descMatch;
 
-      // Price match
-      const matchesPrice = p.price <= maxPriceValue;
-
-      return matchesCategory && matchesSearch && matchesPrice;
+      return matchesCategory && matchesSearch;
     });
 
     // 2. Sort products
@@ -135,9 +103,8 @@ if (document.getElementById("collectionGrid")) {
     if (filtered.length === 0) {
       grid.innerHTML = `
         <div class="no-results fade-in">
-          <div class="no-results-icon">✨</div>
           <h3>No products match your filters</h3>
-          <p>Try refining your search query, adjusting the max price slider, or choosing another category.</p>
+          <p>Try refining your search query or choosing another category from the collections list.</p>
           <button class="btn-reset-filters" id="resetFiltersBtn">Reset All Filters</button>
         </div>
       `;
@@ -153,9 +120,17 @@ if (document.getElementById("collectionGrid")) {
     filtered.forEach(p => {
       const imagePath = p.image || "/logo.png";
       const categoryName = p.category ? (p.category.name || 'Jewelry') : 'Jewelry';
+      
+      // Stock Status Overlay Badge
+      const isOutOfStock = p.inStock === false;
+      const stockBadge = isOutOfStock 
+        ? `<span class="card-status-badge out-of-stock">Out of Stock</span>` 
+        : "";
+
       grid.innerHTML += `
         <a href="product.html?id=${p._id}" class="card-link fade-in">
           <div class="card">
+            ${stockBadge}
             <img src="${imagePath}" alt="${p.name}">
             <div class="info">
               <h3>${p.name}</h3>
@@ -178,16 +153,6 @@ if (document.getElementById("collectionGrid")) {
     if (searchInput) searchInput.value = "";
     if (sortSelect) sortSelect.value = "default";
     
-    if (priceRange) {
-      const prices = allProducts.map(p => p.price);
-      const absoluteMax = prices.length > 0 ? Math.max(...prices, 100000) : 1000000;
-      priceRange.value = absoluteMax;
-      maxPriceValue = absoluteMax;
-      if (priceLabel) {
-        priceLabel.innerText = `₹ ${absoluteMax.toLocaleString("en-IN")}`;
-      }
-    }
-
     if (pillsContainer) {
       const pills = pillsContainer.querySelectorAll(".category-pill");
       pills.forEach(pill => {
@@ -202,6 +167,7 @@ if (document.getElementById("collectionGrid")) {
     filterAndRenderProducts();
   }
 }
+
 
 
 /* HERO SLIDERS & BRAND TAGLINE */

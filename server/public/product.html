@@ -130,13 +130,20 @@
           </div>
           
           <div class="product-detail-info">
-            <span style="font-size:12px; font-weight:600; text-transform:uppercase; color:var(--gold); letter-spacing:1px; font-family:'Inter', sans-serif;">${categoryName}</span>
-            <h1>${product.name}</h1>
+            <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom: 4px;">
+              <span style="font-size:12px; font-weight:600; text-transform:uppercase; color:var(--gold); letter-spacing:1px; font-family:'Inter', sans-serif;">${categoryName}</span>
+              ${product.inStock !== false 
+                ? `<span style="font-size:10px; font-weight:600; text-transform:uppercase; color:#155724; background:#e2f5e7; border:1px solid #c3e6cb; padding:3px 10px; border-radius:30px; font-family:'Inter', sans-serif; letter-spacing:0.5px;">In Showroom</span>`
+                : `<span style="font-size:10px; font-weight:600; text-transform:uppercase; color:#721c24; background:#fdf2f2; border:1px solid #f5c6cb; padding:3px 10px; border-radius:30px; font-family:'Inter', sans-serif; letter-spacing:0.5px;">Out of Stock</span>`
+              }
+            </div>
+            <h1 style="margin-top: 5px;">${product.name}</h1>
             
             <div class="product-meta-row">
               <div class="product-meta-item" style="font-family:'Inter', sans-serif;">Category: <strong>${categoryName}</strong></div>
               ${modelTag}
             </div>
+
             
             <div class="product-price-box" style="font-family:'Inter', sans-serif;">
               ₹ ${product.price.toLocaleString('en-IN')}
