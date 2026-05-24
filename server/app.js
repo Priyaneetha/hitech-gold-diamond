@@ -7,9 +7,13 @@ require("dotenv").config();
 
 const app = express();
 
+// Trust reverse proxy for secure cookies on hosting platforms (like Render/Railway)
+app.set("trust proxy", 1);
+
 /* Middleware */
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
 
 app.use(session({
   secret: process.env.SESSION_SECRET || "hitechgoldsecret",
