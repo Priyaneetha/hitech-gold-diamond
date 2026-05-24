@@ -918,9 +918,92 @@ html {
   .collections {
     padding: 60px 20px;
   }
+
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
 }
 
 @media (max-width: 768px) {
+  /* NAVBAR RESPONSIVENESS */
+  .navbar {
+    flex-direction: column;
+    padding: 15px 20px;
+    gap: 12px;
+    text-align: center;
+  }
+
+  .nav-left {
+    justify-content: center;
+    width: 100%;
+    gap: 10px;
+  }
+
+  .brand {
+    font-size: 18px;
+  }
+
+  .logo {
+    height: 32px;
+  }
+
+  .nav-links {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    width: 100%;
+  }
+
+  .nav-links a {
+    margin-left: 0;
+    font-size: 14px;
+  }
+
+  /* HERO RESPONSIVENESS */
+  .hero {
+    height: 380px;
+  }
+
+  .hero h1 {
+    font-size: 32px;
+  }
+
+  .tagline-malayalam {
+    font-size: 20px;
+  }
+
+  .prev-btn, .next-btn {
+    display: none; /* Hide navigation arrows on mobile for cleaner screen space */
+  }
+
+  /* GOLD RATE RESPONSIVENESS */
+  .gold-rate {
+    margin: 30px 15px;
+  }
+
+  .rate-box {
+    padding: 24px 30px;
+    width: 100%;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+  }
+
+  .rate-box .price {
+    font-size: 30px;
+  }
+
+  /* GRID RESPONSIVENESS */
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+
+  /* FILTERING RESPONSIVENESS */
+  .filter-wrapper {
+    padding: 20px;
+    margin-bottom: 30px;
+  }
+
   .filter-top-row {
     flex-direction: column;
     align-items: stretch;
@@ -929,5 +1012,30 @@ html {
 
   .sort-control select {
     width: 100%;
+  }
+
+  /* PRODUCT DETAILS RESPONSIVENESS overrides and additions */
+  .contact-action-box {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .btn-contact {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .grid {
+    grid-template-columns: repeat(1, 1fr);
+  }
+
+  .hero h1 {
+    font-size: 26px;
+  }
+
+  .tagline-malayalam {
+    font-size: 18px;
   }
 }
