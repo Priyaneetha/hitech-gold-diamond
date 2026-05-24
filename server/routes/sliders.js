@@ -9,6 +9,29 @@ const isAdmin = require("../middleware/isAdmin");
 
 const router = express.Router();
 
+const getImageUrl = (file) => {
+  if (!file) return "";
+  if (file.path && (file.path.startsWith("http://") || file.path.startsWith("https://"))) {
+    return file.path;
+  }
+  return `/uploads/${file.filename}`;
+};
+
+const deleteLocalFile = async (imageUrl) => {
+  if (!imageUrl) return;
+  if (imageUrl.startsWith("http://") || imageUrl.startsWith("https://") || imageUrl.startsWith("/logo")) {
+    return;
+  }
+  const fileName = path.basename(imageUrl);
+  const filePath = path.join(__dirname, "..", "uploads", fileName);
+  try {
+    await fs.unlink(filePath);
+  } catch (err) {
+    console.warn("Failed to delete local file:", err.message);
+  }
+};
+
+
 /* ADD SLIDE */
 router.post("/", isAdmin, upload.single("image"), async (req, res, next) => {
   console.log('Add slide request received');
@@ -24,7 +47,7 @@ router.post("/", isAdmin, upload.single("image"), async (req, res, next) => {
       console.log("DB Offline: Adding Slider in Demo Mode");
       const newSlide = {
         _id: "slide_" + Date.now(),
-        image: `/uploads/${req.file.filename}`,
+        image: getImageUrl(req.file),
         order: Number(req.body.order) || 0,
         active: true
       };
@@ -33,7 +56,7 @@ router.post("/", isAdmin, upload.single("image"), async (req, res, next) => {
     }
 
     const slide = new Slider({
-      image: `/uploads/${req.file.filename}`,
+      image: getImageUrl(req.file),
       order: req.body.order || 0,
       active: true
     });
@@ -79,15 +102,7 @@ router.delete("/:id", isAdmin, async (req, res, next) => {
 
       const slide = demoDb.sliders[index];
       // Delete image file from disk
-      if (slide.image && slide.image !== "/logo.png") {
-        const fileName = path.basename(slide.image);
-        const filePath = path.join(__dirname, "..", "uploads", fileName);
-        try {
-          await fs.unlink(filePath);
-        } catch (err) {
-          console.error("Failed to delete slider image file from disk:", err.message);
-        }
-      }
+      await deleteLocalFile(slide.image);
 
       demoDb.sliders.splice(index, 1);
       return res.send("Slide deleted");
@@ -103,15 +118,7 @@ router.delete("/:id", isAdmin, async (req, res, next) => {
     }
 
     // Delete image file from disk
-    if (slide.image) {
-      const fileName = path.basename(slide.image);
-      const filePath = path.join(__dirname, "..", "uploads", fileName);
-      try {
-        await fs.unlink(filePath);
-      } catch (err) {
-        console.error("Failed to delete slider image file from disk:", err.message);
-      }
-    }
+    await deleteLocalFile(slide.image);
 
     await Slider.findByIdAndDelete(req.params.id);
     res.send("Slide deleted");

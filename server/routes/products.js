@@ -10,6 +10,28 @@ const isAdmin = require("../middleware/isAdmin");
 
 const router = express.Router();
 
+const getImageUrl = (file) => {
+  if (!file) return "";
+  if (file.path && (file.path.startsWith("http://") || file.path.startsWith("https://"))) {
+    return file.path;
+  }
+  return `/uploads/${file.filename}`;
+};
+
+const deleteLocalFile = async (imageUrl) => {
+  if (!imageUrl) return;
+  if (imageUrl.startsWith("http://") || imageUrl.startsWith("https://") || imageUrl.startsWith("/logo")) {
+    return;
+  }
+  const fileName = path.basename(imageUrl);
+  const filePath = path.join(__dirname, "..", "uploads", fileName);
+  try {
+    await fs.unlink(filePath);
+  } catch (err) {
+    console.warn("Failed to delete local file:", err.message);
+  }
+};
+
 /* CREATE PRODUCT */
 router.post("/", isAdmin, upload.single("image"), async (req, res, next) => {
   try {
@@ -17,9 +39,7 @@ router.post("/", isAdmin, upload.single("image"), async (req, res, next) => {
 
     if (!name || !category || !price) {
       // Clean up uploaded file if validation failed
-      if (req.file) {
-        await fs.unlink(req.file.path).catch(err => console.error("Error cleaning up file:", err));
-      }
+      await deleteLocalFile(getImageUrl(req.file));
       return res.status(400).json({ message: "Name, category, and price are required." });
     }
 
@@ -29,9 +49,7 @@ router.post("/", isAdmin, upload.single("image"), async (req, res, next) => {
       console.log("DB Offline: Creating Product in Demo Mode");
       const foundCategory = demoDb.categories.find(c => c._id === category);
       if (!foundCategory) {
-        if (req.file) {
-          await fs.unlink(req.file.path).catch(err => console.error("Error cleaning up file:", err));
-        }
+        await deleteLocalFile(getImageUrl(req.file));
         return res.status(404).json({ message: "Selected category does not exist." });
       }
 
@@ -42,7 +60,7 @@ router.post("/", isAdmin, upload.single("image"), async (req, res, next) => {
         category: foundCategory,
         price: Number(price),
         description: description || "",
-        image: req.file ? `/uploads/${req.file.filename}` : "",
+        image: getImageUrl(req.file),
         inStock: isAvailable
       };
       
@@ -52,18 +70,14 @@ router.post("/", isAdmin, upload.single("image"), async (req, res, next) => {
 
     // Validate category format
     if (!mongoose.Types.ObjectId.isValid(category)) {
-      if (req.file) {
-        await fs.unlink(req.file.path).catch(err => console.error("Error cleaning up file:", err));
-      }
+      await deleteLocalFile(getImageUrl(req.file));
       return res.status(400).json({ message: "Invalid category ID format." });
     }
 
     // Verify category exists
     const categoryExists = await Category.findById(category);
     if (!categoryExists) {
-      if (req.file) {
-        await fs.unlink(req.file.path).catch(err => console.error("Error cleaning up file:", err));
-      }
+      await deleteLocalFile(getImageUrl(req.file));
       return res.status(404).json({ message: "Selected category does not exist." });
     }
 
@@ -73,7 +87,7 @@ router.post("/", isAdmin, upload.single("image"), async (req, res, next) => {
       category,
       price: Number(price),
       description,
-      image: req.file ? `/uploads/${req.file.filename}` : "",
+      image: getImageUrl(req.file),
       inStock: isAvailable
     });
 
@@ -129,9 +143,7 @@ router.put("/:id", isAdmin, upload.single("image"), async (req, res, next) => {
     const { name, modelNo, category, price, description, inStock } = req.body;
 
     if (!name || !category || !price) {
-      if (req.file) {
-        await fs.unlink(req.file.path).catch(err => console.error("Error cleaning up file:", err));
-      }
+      await deleteLocalFile(getImageUrl(req.file));
       return res.status(400).json({ message: "Name, category, and price are required." });
     }
 
@@ -141,17 +153,13 @@ router.put("/:id", isAdmin, upload.single("image"), async (req, res, next) => {
       console.log("DB Offline: Updating Product in Demo Mode");
       const index = demoDb.products.findIndex(p => p._id === req.params.id);
       if (index === -1) {
-        if (req.file) {
-          await fs.unlink(req.file.path).catch(err => console.error("Error cleaning up file:", err));
-        }
+        await deleteLocalFile(getImageUrl(req.file));
         return res.status(404).json({ message: "Product not found." });
       }
 
       const foundCategory = demoDb.categories.find(c => c._id === category);
       if (!foundCategory) {
-        if (req.file) {
-          await fs.unlink(req.file.path).catch(err => console.error("Error cleaning up file:", err));
-        }
+        await deleteLocalFile(getImageUrl(req.file));
         return res.status(404).json({ message: "Selected category does not exist." });
       }
 
@@ -160,12 +168,8 @@ router.put("/:id", isAdmin, upload.single("image"), async (req, res, next) => {
 
       if (req.file) {
         // Delete old image file
-        if (oldProduct.image && !oldProduct.image.startsWith("/logo")) {
-          const fileName = path.basename(oldProduct.image);
-          const filePath = path.join(__dirname, "..", "uploads", fileName);
-          await fs.unlink(filePath).catch(err => console.warn("Failed to delete old image:", err.message));
-        }
-        imagePath = `/uploads/${req.file.filename}`;
+        await deleteLocalFile(oldProduct.image);
+        imagePath = getImageUrl(req.file);
       }
 
       demoDb.products[index] = {
@@ -183,45 +187,33 @@ router.put("/:id", isAdmin, upload.single("image"), async (req, res, next) => {
     }
 
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-      if (req.file) {
-        await fs.unlink(req.file.path).catch(err => console.error("Error cleaning up file:", err));
-      }
+      await deleteLocalFile(getImageUrl(req.file));
       return res.status(400).json({ message: "Invalid product ID format." });
     }
 
     // Validate category
     if (!mongoose.Types.ObjectId.isValid(category)) {
-      if (req.file) {
-        await fs.unlink(req.file.path).catch(err => console.error("Error cleaning up file:", err));
-      }
+      await deleteLocalFile(getImageUrl(req.file));
       return res.status(400).json({ message: "Invalid category ID format." });
     }
 
     const categoryExists = await Category.findById(category);
     if (!categoryExists) {
-      if (req.file) {
-        await fs.unlink(req.file.path).catch(err => console.error("Error cleaning up file:", err));
-      }
+      await deleteLocalFile(getImageUrl(req.file));
       return res.status(404).json({ message: "Selected category does not exist." });
     }
 
     const product = await Product.findById(req.params.id);
     if (!product) {
-      if (req.file) {
-        await fs.unlink(req.file.path).catch(err => console.error("Error cleaning up file:", err));
-      }
+      await deleteLocalFile(getImageUrl(req.file));
       return res.status(404).json({ message: "Product not found." });
     }
 
     let imagePath = product.image;
     if (req.file) {
       // Delete old image
-      if (product.image && !product.image.startsWith("/logo")) {
-        const fileName = path.basename(product.image);
-        const filePath = path.join(__dirname, "..", "uploads", fileName);
-        await fs.unlink(filePath).catch(err => console.warn("Failed to delete old image:", err.message));
-      }
-      imagePath = `/uploads/${req.file.filename}`;
+      await deleteLocalFile(product.image);
+      imagePath = getImageUrl(req.file);
     }
 
     product.name = name;
@@ -252,15 +244,7 @@ router.delete("/:id", isAdmin, async (req, res, next) => {
 
       const product = demoDb.products[index];
       // Delete image from disk if it exists
-      if (product.image) {
-        const fileName = path.basename(product.image);
-        const filePath = path.join(__dirname, "..", "uploads", fileName);
-        try {
-          await fs.unlink(filePath);
-        } catch (err) {
-          console.error("Failed to delete product image file from disk:", err.message);
-        }
-      }
+      await deleteLocalFile(product.image);
 
       demoDb.products.splice(index, 1);
       return res.send("Product deleted");
@@ -276,15 +260,7 @@ router.delete("/:id", isAdmin, async (req, res, next) => {
     }
 
     // Delete image from disk if it exists
-    if (product.image) {
-      const fileName = path.basename(product.image);
-      const filePath = path.join(__dirname, "..", "uploads", fileName);
-      try {
-        await fs.unlink(filePath);
-      } catch (err) {
-        console.error("Failed to delete product image file from disk:", err.message);
-      }
-    }
+    await deleteLocalFile(product.image);
 
     await Product.findByIdAndDelete(req.params.id);
     res.send("Product deleted");
