@@ -9,39 +9,200 @@ fetch("/api/goldrate")
   })
   .catch(err => console.error("Error fetching gold rate:", err));
 
-/* PRODUCTS IN GRID */
+/* PRODUCTS IN GRID WITH ADVANCED FILTERING & SORTING */
 if (document.getElementById("collectionGrid")) {
-  fetch("/api/products")
-    .then(res => res.json())
-    .then(products => {
-      const grid = document.getElementById("collectionGrid");
-      grid.innerHTML = "";
-      
-      if (products.length === 0) {
-        grid.innerHTML = "<p style='grid-column: 1/-1; text-align: center; color: #666;'>No items found in our collections.</p>";
-        return;
+  let allProducts = [];
+  let allCategories = [];
+  let activeCategory = "all";
+  let searchQuery = "";
+  let currentSort = "default";
+  let maxPriceValue = 1000000;
+  
+  const grid = document.getElementById("collectionGrid");
+  const pillsContainer = document.getElementById("categoryPills");
+  const searchInput = document.getElementById("searchInput");
+  const sortSelect = document.getElementById("sortSelect");
+  const priceRange = document.getElementById("priceRange");
+  const priceLabel = document.getElementById("priceLabel");
+
+  Promise.all([
+    fetch("/api/products").then(res => res.json()),
+    fetch("/api/categories").then(res => res.json())
+  ])
+  .then(([products, categories]) => {
+    allProducts = products;
+    allCategories = categories;
+
+    // Dynamically render category pills
+    if (pillsContainer) {
+      pillsContainer.innerHTML = `<button class="category-pill active" data-category="all">All Collections</button>`;
+      allCategories.forEach(cat => {
+        pillsContainer.innerHTML += `<button class="category-pill" data-category="${cat._id}">${cat.name}</button>`;
+      });
+
+      // Add click listeners to pills
+      const pills = pillsContainer.querySelectorAll(".category-pill");
+      pills.forEach(pill => {
+        pill.addEventListener("click", () => {
+          pills.forEach(p => p.classList.remove("active"));
+          pill.classList.add("active");
+          activeCategory = pill.getAttribute("data-category");
+          filterAndRenderProducts();
+        });
+      });
+    }
+
+    // Set up search listener (real-time keypress/input)
+    if (searchInput) {
+      searchInput.addEventListener("input", (e) => {
+        searchQuery = e.target.value.toLowerCase().trim();
+        filterAndRenderProducts();
+      });
+    }
+
+    // Set up sort listener
+    if (sortSelect) {
+      sortSelect.addEventListener("change", (e) => {
+        currentSort = e.target.value;
+        filterAndRenderProducts();
+      });
+    }
+
+    // Set up price range slider dynamically
+    if (priceRange) {
+      if (allProducts.length > 0) {
+        const prices = allProducts.map(p => p.price);
+        const absoluteMax = Math.max(...prices, 100000);
+        priceRange.max = absoluteMax;
+        priceRange.value = absoluteMax;
+        maxPriceValue = absoluteMax;
+        if (priceLabel) {
+          priceLabel.innerText = `₹ ${absoluteMax.toLocaleString("en-IN")}`;
+        }
+      } else {
+        if (priceLabel) {
+          priceLabel.innerText = `₹ 0`;
+        }
       }
 
-      products.forEach(p => {
-        const imagePath = p.image || "/logo.png";
-        grid.innerHTML += `
-          <a href="product.html?id=${p._id}" class="card-link fade-in">
-            <div class="card">
-              <img src="${imagePath}" alt="${p.name}">
-              <div class="info">
-                <h3>${p.name}</h3>
-                <div style="display:flex; justify-content:space-between; margin-top:8px;">
-                  <span style="font-size:12px; text-transform:uppercase; color:#999; font-family:'Inter', sans-serif;">${p.category ? p.category.name : 'Jewelry'}</span>
-                  <span style="font-weight:600; color:var(--wine-dark); font-family:'Inter', sans-serif;">₹ ${p.price}</span>
-                </div>
+      priceRange.addEventListener("input", (e) => {
+        maxPriceValue = Number(e.target.value);
+        if (priceLabel) {
+          priceLabel.innerText = `₹ ${maxPriceValue.toLocaleString("en-IN")}`;
+        }
+        filterAndRenderProducts();
+      });
+    }
+
+    // Initial render
+    filterAndRenderProducts();
+  })
+  .catch(err => console.error("Error loading collections:", err));
+
+  function filterAndRenderProducts() {
+    grid.innerHTML = "";
+
+    // 1. Filter products
+    let filtered = allProducts.filter(p => {
+      // Category match
+      const matchesCategory = (activeCategory === "all") || 
+        (p.category && (p.category._id === activeCategory || p.category === activeCategory));
+
+      // Search match
+      const nameMatch = p.name ? p.name.toLowerCase().includes(searchQuery) : false;
+      const modelMatch = p.modelNo ? p.modelNo.toLowerCase().includes(searchQuery) : false;
+      const descMatch = p.description ? p.description.toLowerCase().includes(searchQuery) : false;
+      const matchesSearch = searchQuery === "" || nameMatch || modelMatch || descMatch;
+
+      // Price match
+      const matchesPrice = p.price <= maxPriceValue;
+
+      return matchesCategory && matchesSearch && matchesPrice;
+    });
+
+    // 2. Sort products
+    if (currentSort === "price-asc") {
+      filtered.sort((a, b) => a.price - b.price);
+    } else if (currentSort === "price-desc") {
+      filtered.sort((a, b) => b.price - a.price);
+    } else if (currentSort === "name-asc") {
+      filtered.sort((a, b) => a.name.localeCompare(b.name));
+    } else if (currentSort === "name-desc") {
+      filtered.sort((a, b) => b.name.localeCompare(a.name));
+    }
+
+    // 3. Render grid contents
+    if (filtered.length === 0) {
+      grid.innerHTML = `
+        <div class="no-results fade-in">
+          <div class="no-results-icon">✨</div>
+          <h3>No products match your filters</h3>
+          <p>Try refining your search query, adjusting the max price slider, or choosing another category.</p>
+          <button class="btn-reset-filters" id="resetFiltersBtn">Reset All Filters</button>
+        </div>
+      `;
+      const resetBtn = document.getElementById("resetFiltersBtn");
+      if (resetBtn) {
+        resetBtn.addEventListener("click", () => {
+          resetFilters();
+        });
+      }
+      return;
+    }
+
+    filtered.forEach(p => {
+      const imagePath = p.image || "/logo.png";
+      const categoryName = p.category ? (p.category.name || 'Jewelry') : 'Jewelry';
+      grid.innerHTML += `
+        <a href="product.html?id=${p._id}" class="card-link fade-in">
+          <div class="card">
+            <img src="${imagePath}" alt="${p.name}">
+            <div class="info">
+              <h3>${p.name}</h3>
+              <div style="display:flex; justify-content:space-between; margin-top:8px; align-items: center;">
+                <span style="font-size:12px; text-transform:uppercase; color:#999; font-family:'Inter', sans-serif;">${categoryName}</span>
+                <span style="font-weight:600; color:var(--wine-dark); font-family:'Inter', sans-serif;">₹ ${p.price.toLocaleString("en-IN")}</span>
               </div>
             </div>
-          </a>
-        `;
+          </div>
+        </a>
+      `;
+    });
+  }
+
+  function resetFilters() {
+    activeCategory = "all";
+    searchQuery = "";
+    currentSort = "default";
+    
+    if (searchInput) searchInput.value = "";
+    if (sortSelect) sortSelect.value = "default";
+    
+    if (priceRange) {
+      const prices = allProducts.map(p => p.price);
+      const absoluteMax = prices.length > 0 ? Math.max(...prices, 100000) : 1000000;
+      priceRange.value = absoluteMax;
+      maxPriceValue = absoluteMax;
+      if (priceLabel) {
+        priceLabel.innerText = `₹ ${absoluteMax.toLocaleString("en-IN")}`;
+      }
+    }
+
+    if (pillsContainer) {
+      const pills = pillsContainer.querySelectorAll(".category-pill");
+      pills.forEach(pill => {
+        if (pill.getAttribute("data-category") === "all") {
+          pill.classList.add("active");
+        } else {
+          pill.classList.remove("active");
+        }
       });
-    })
-    .catch(err => console.error("Error fetching products:", err));
+    }
+
+    filterAndRenderProducts();
+  }
 }
+
 
 /* HERO SLIDERS & BRAND TAGLINE */
 Promise.all([
