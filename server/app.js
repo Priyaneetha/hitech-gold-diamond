@@ -28,14 +28,23 @@ const seedAdmin = async () => {
   try {
     const Admin = require("./models/Admin");
     const bcrypt = require("bcrypt");
-    const count = await Admin.countDocuments();
-    if (count === 0) {
-      const username = process.env.ADMIN_USERNAME || "admin";
-      const password = process.env.ADMIN_PASSWORD || "admin123";
+    const username = process.env.ADMIN_USERNAME || "admin";
+    const password = process.env.ADMIN_PASSWORD || "admin123";
+
+    const existingAdmin = await Admin.findOne({ username });
+    if (existingAdmin) {
+      // Re-hash and update password in case it was changed in env config
       const hashedPassword = await bcrypt.hash(password, 10);
-      const defaultAdmin = new Admin({ username, password: hashedPassword });
-      await defaultAdmin.save();
-      console.log(`Admin user seeded successfully with username: '${username}' and password: '${password}'`);
+      existingAdmin.password = hashedPassword;
+      await existingAdmin.save();
+      console.log(`Admin credentials verified & synchronized successfully for user: '${username}'`);
+    } else {
+      // Clear old admins to keep user database secure and single-tenant
+      await Admin.deleteMany({});
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const newAdmin = new Admin({ username, password: hashedPassword });
+      await newAdmin.save();
+      console.log(`Admin user initialized successfully with username: '${username}'`);
     }
   } catch (error) {
     console.error("Error seeding admin user:", error);
