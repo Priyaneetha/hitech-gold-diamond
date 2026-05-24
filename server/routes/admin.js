@@ -1,44 +1,53 @@
 const express = require("express");
+const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const Admin = require("../models/Admin");
+const demoDb = require("../utils/demoDb");
 
 const router = express.Router();
 
-/* Create admin ONCE */
-router.post("/create", async (req, res) => {
-  const { username, password } = req.body;
+/* LOGIN */
+router.post("/login", async (req, res, next) => {
+  try {
+    const { username, password } = req.body;
 
-  const hash = await bcrypt.hash(password, 10);
-  const admin = new Admin({ username, password: hash });
+    let admin;
+    if (mongoose.connection.readyState !== 1) {
+      console.log("DB Offline: Processing login via Demo Mode");
+      admin = demoDb.admins.find(a => a.username === username);
+    } else {
+      admin = await Admin.findOne({ username });
+    }
 
-  await admin.save();
-  res.send("Admin created");
+    if (!admin) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+
+    const isMatch = await bcrypt.compare(password, admin.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+
+    req.session.admin = admin._id;
+    res.json({ message: "Login successful" });
+  } catch (err) {
+    next(err);
+  }
 });
 
-/* Login */
-router.post("/login", async (req, res) => {
-  const { username, password } = req.body;
-
-  const admin = await Admin.findOne({ username });
-  if (!admin) return res.status(401).json({ message: "Invalid credentials" });
-
-  const match = await bcrypt.compare(password, admin.password);
-  if (!match) return res.status(401).json({ message: "Invalid credentials" });
-
-  req.session.admin = true;
-  res.json({ message: "Login successful" });
-});
-
-/* Check auth */
+/* AUTH CHECK */
 router.get("/check", (req, res) => {
-  if (req.session.admin) res.send("Authenticated");
-  else res.status(401).send("Not logged in");
+  if (req.session.admin) {
+    res.json({ authenticated: true });
+  } else {
+    res.status(401).json({ authenticated: false });
+  }
 });
 
-/* Logout */
-router.get("/logout", (req, res) => {
+/* LOGOUT */
+router.post("/logout", (req, res) => {
   req.session.destroy();
-  res.send("Logged out");
+  res.json({ message: "Logged out" });
 });
 
 module.exports = router;

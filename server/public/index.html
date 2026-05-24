@@ -1,66 +1,93 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Hi-Tech Gold & Diamonds</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-<!-- NAVBAR -->
-<nav class="navbar">
-  <div class="nav-left">
-    <img src="logo.png" class="logo" alt="Hi-Tech Gold & Diamonds">
-    <span class="brand-name">Hi-Tech Gold & Diamonds</span>
-  </div>
-  <ul class="nav-links">
-    <li><a href="index.html" class="active">Home</a></li>
-    <li><a href="collections.html">Collections</a></li>
-    <li><a href="#footer">Contact</a></li>
-  </ul>
-</nav>
+  <header class="navbar">
+    <div class="nav-left">
+      <img src="logo.png" class="logo">
+      <span class="brand">Hi-Tech Gold & Diamonds</span>
+    </div>
 
-<!-- HERO (STATIC, SLIDER LOGIC KEPT SEPARATE) -->
-<section class="hero-static">
-  <div class="hero-content">
-    <span class="gold-line"></span>
-    <h1>Hi-Tech Gold & Diamonds</h1>
-    <p>Tradition Crafted in Gold</p>
-    <p class="malayalam">ഓരോ തരി പൊന്നിലും ഒരു കോടി വിശ്വാസം </p>
-  </div>
-</section>
+    <nav class="nav-links">
+      <a href="/">Home</a>
+      <a href="collections.html">Collections</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </header>
 
-<!-- GOLD RATE -->
-<section class="gold-rate-section">
-  <div class="gold-rate-box">
-    <span class="label">Today’s Gold Rate</span>
-    <h2 id="goldRate">₹ —</h2>
-    <p class="sub">Per gram · 8 grams</p>
-  </div>
-</section>
+  <section class="hero fade-in" id="heroSection">
+    <div class="hero-slides-container" id="heroSlides"></div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <h1 id="taglineEng">Crafted in Gold. Defined by Elegance.</h1>
+      <h2 id="taglineMal" class="tagline-malayalam">വിശ്വാസത്തിന്റെ സ്വർണ്ണം</h2>
+    </div>
+    <button class="slide-nav-btn prev-btn" id="prevSlideBtn" aria-label="Previous Slide">⟨</button>
+    <button class="slide-nav-btn next-btn" id="nextSlideBtn" aria-label="Next Slide">⟩</button>
+    <div class="slide-indicators" id="slideIndicators"></div>
+    <div class="slider-progress-bar" id="sliderProgressBar"></div>
+  </section>
 
-<!-- VIEW COLLECTIONS -->
-<section class="home-cta">
-  <a href="collections.html" class="view-all">View Our Collections →</a>
-</section>
+  <section class="gold-rate">
+    <div class="rate-box">
+      <span class="label">Today's Gold Rate</span>
+      <span id="goldRate" class="price">₹ —</span>
+      <span class="sub">Per gram · 8 grams</span>
+    </div>
+  </section>
 
-<!-- FOOTER -->
-<footer class="footer" id="footer">
-  <p class="malayalam">ഓരോ തരി പൊന്നിലും ഒരു കോടി വിശ്വാസം </p>
-  <p>Hi-Tech Gold & Diamonds</p>
-  <p>Kuttiadi, Kerala, India</p>
-  <p>📞 +91 94473 84746</p>
-</footer>
+  <section class="about-us fade-in">
+    <div class="about-container">
+      <div class="about-text">
+        <span class="about-subtitle">Our Legacy</span>
+        <h2>About Hi-Tech Gold & Diamonds</h2>
+        <p>
+          For generations, Hi-Tech Gold & Diamonds has been a trusted hallmark of purity and elegant craftsmanship.
+          Located in the heart of Kuttiadi, Kerala, we pride ourselves on delivering timeless jewelry masterpieces that
+          blend classic traditional heritage with modern aesthetics.
+        </p>
+        <p>
+          Every piece in our collection is crafted with the highest standards of perfection, ensuring 100% 916 BIS
+          Hallmark purity. Whether you are searching for exquisite bridal choker neckpieces, timeless bangles, or
+          elegant daily wear rings, we promise trust, excellence, and a memorable experience.
+        </p>
+      </div>
+      <div class="about-features">
+        <div class="feature-card">
+          <div class="feature-icon"></div>
+          <h3>100% BIS Hallmark Purity</h3>
+          <p>Guaranteed 916 purity on all gold collections with certified transparency.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"></div>
+          <h3>Exquisite Craftsmanship</h3>
+          <p>Designed by master artisans honoring heritage and modern elegance.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon"></div>
+          <h3>Decades of Trust</h3>
+          <p>A relationship built on transparency, fair rates, and exceptional service.</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
-<script>
-const BASE_URL = "https://hitech-gold-diamonds.onrender.com";
+  <footer id="contact" class="footer">
+    <p>Hi-Tech Gold & Diamonds</p>
+    <p id="footerAddress">Kuttiadi, Kerala, India</p>
+    <p id="footerPhone">+91 9447384746</p>
+  </footer>
 
-fetch(`${BASE_URL}/api/goldrate`)
-  .then(res => res.json())
-  .then(data => {
-    document.getElementById("goldRate").innerText = `₹ ${data.rate}`;
-  });
-</script>
-
+  <script src="script.js"></script>
 </body>
+
 </html>

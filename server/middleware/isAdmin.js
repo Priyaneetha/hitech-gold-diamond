@@ -1,7 +1,9 @@
 module.exports = function (req, res, next) {
-  if (req.session.admin) {
+  console.log('isAdmin middleware - session contents:', req.session);
+  if (req.session && req.session.admin) {
     next();
   } else {
-    res.status(401).send("Unauthorized");
+    console.warn('Unauthorized request to', req.originalUrl);
+    res.status(401).json({ error: 'Unauthorized' });
   }
 };

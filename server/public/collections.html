@@ -3,58 +3,30 @@
 <head>
   <meta charset="UTF-8">
   <title>Collections | Hi-Tech Gold & Diamonds</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<nav class="navbar">
+<header class="navbar">
   <div class="nav-left">
     <img src="logo.png" class="logo">
-    <span class="brand-name">Hi-Tech Gold & Diamonds</span>
+    <span class="brand">Hi-Tech Gold & Diamonds</span>
   </div>
-  <ul class="nav-links">
-    <li><a href="index.html">Home</a></li>
-    <li><a href="collections.html" class="active">Collections</a></li>
-    <li><a href="#footer">Contact</a></li>
-  </ul>
-</nav>
 
-<section class="page-header">
-  <h1>Our Collections</h1>
-  <p>Crafted for every tradition</p>
+  <nav class="nav-links">
+    <a href="/">Home</a>
+    <a href="collections.html">Collections</a>
+  </nav>
+</header>
+
+<section class="collections">
+  <h2>Our Collections</h2>
+
+  <div class="grid" id="collectionGrid"></div>
 </section>
 
-<section class="collections-page">
-  <div class="collection-grid" id="collectionGrid"></div>
-</section>
-
-<footer class="footer" id="footer">
-  <p class="malayalam">വിശ്വാസത്തിന്റെ സ്വർണ്ണം</p>
-  <p>Hi-Tech Gold & Diamonds</p>
-  <p>Kuttiadi, Kerala, India</p>
-</footer>
-
-<script>
-const BASE_URL = "https://hitech-gold-diamonds.onrender.com";
-
-fetch(`${BASE_URL}/api/products`)
-  .then(res => res.json())
-  .then(products => {
-    const grid = document.getElementById("collectionGrid");
-
-    products.forEach(product => {
-      grid.innerHTML += `
-        <a href="product.html?id=${product._id}" class="collection-card">
-          <img src="${BASE_URL}${product.image}">
-          <div class="collection-info">
-            <h3>${product.name}</h3>
-            <span>Model No: ${product.modelNo}</span>
-          </div>
-        </a>
-      `;
-    });
-  });
-</script>
-
+<script src="script.js"></script>
 </body>
 </html>

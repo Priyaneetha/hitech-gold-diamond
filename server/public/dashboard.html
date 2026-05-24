@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Dashboard | Hi-Tech Gold & Diamonds</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Inter:wght@400;500;600&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="admin.css">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+
+    h1,
+    h2,
+    h3,
+    .brand {
+      font-family: 'Playfair Display', serif;
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="admin-header">
+    <div class="left">
+      <img src="logo.png" alt="Logo">
+      <span class="brand">Hi-Tech Gold & Diamonds — Control Center</span>
+    </div>
+    <button class="logout" onclick="logout()">Logout</button>
+  </header>
+
+  <div class="admin-wrapper">
+
+    <!-- GOLD RATE -->
+    <div class="panel">
+      <h2>Today's Gold Rate</h2>
+      <p class="hint">Set the gold rate per gram. The rate for 8 grams (1 sovereign) is automatically calculated.</p>
+      <div class="row" style="align-items: center; margin-bottom: 10px;">
+        <div style="flex: 1;">
+          <label for="goldRateInput" style="display:block; margin-bottom: 5px; font-weight:500;">Rate Per Gram
+            (INR)</label>
+          <input type="number" id="goldRateInput" placeholder="e.g. 6250">
+        </div>
+        <div style="flex: 1; padding-left: 20px;">
+          <strong>Current Displayed Rate:</strong>
+          <div id="currentGoldRate" style="font-size: 18px; color: var(--wine); margin-top: 5px; font-weight:600;">₹ —
+          </div>
+        </div>
+      </div>
+      <button onclick="updateGoldRate()">Update Gold Rate</button>
+    </div>
+
+    <!-- BRAND TAGLINES -->
+    <div class="panel">
+      <h2>Brand Taglines</h2>
+      <p class="hint">Set the slogans/taglines to display on the storefront website in English and Malayalam.</p>
+      <label for="taglineEnglish" style="display:block; margin-bottom: 5px; font-weight:500;">English Slogan</label>
+      <input type="text" id="taglineEnglish" placeholder="e.g. Crafted in Gold. Defined by Elegance.">
+
+      <label for="taglineMalayalam" style="display:block; margin-bottom: 5px; font-weight:500;">Malayalam Slogan</label>
+      <input type="text" id="taglineMalayalam" placeholder="e.g. വിശ്വാസത്തിന്റെ സ്വർണ്ണം">
+
+      <button onclick="updateTagline()">Update Taglines</button>
+    </div>
+
+    <!-- CONTACT DETAILS -->
+    <div class="panel">
+      <h2>Contact Details</h2>
+      <p class="hint">Set your contact details and location address displayed on the website.</p>
+
+      <label for="contactPhone" style="display:block; margin-bottom: 5px; font-weight:500;">Phone Number (storefront
+        display)</label>
+      <input type="text" id="contactPhone" placeholder="e.g. +91 9447384746">
+
+      <label for="contactWhatsApp" style="display:block; margin-bottom: 5px; font-weight:500;">WhatsApp Number
+      </label>
+      <input type="text" id="contactWhatsApp" placeholder="e.g. 919447384746">
+
+      <label for="contactAddress" style="display:block; margin-bottom: 5px; font-weight:500;">Address / Location</label>
+      <input type="text" id="contactAddress" placeholder="e.g. Kuttiadi, Kerala, India">
+
+      <button onclick="updateContact()">Update Contact Details</button>
+    </div>
+
+    <!-- CATEGORIES -->
+    <div class="panel">
+      <h2>Manage Categories</h2>
+      <p class="hint">Organize products into categories (e.g. Bangles, Necklaces, Rings).</p>
+      <div class="row" style="align-items: flex-end;">
+        <div style="flex: 1;">
+          <label for="newCategoryName" style="display:block; margin-bottom: 5px; font-weight:500;">Category Name</label>
+          <input type="text" id="newCategoryName" placeholder="e.g. Bangles">
+        </div>
+        <div>
+          <button onclick="addCategory()" style="margin-bottom: 16px;">Add Category</button>
+        </div>
+      </div>
+
+      <h3>Existing Categories</h3>
+      <div class="category-list-container" id="categoryList">
+        <p>Loading categories...</p>
+      </div>
+    </div>
+
+    <!-- SLIDER BANNERS -->
+    <div class="panel">
+      <h2>Storefront Slider Banners</h2>
+      <p class="hint">Upload banner images to feature in the home slider. Recommended ratio: 16:9 or similar wide
+        format.</p>
+      <div class="row" style="align-items: flex-end;">
+        <div style="flex: 2;">
+          <label for="sliderImage" style="display:block; margin-bottom: 5px; font-weight:500;">Banner Image</label>
+          <input type="file" id="sliderImage" accept="image/*">
+        </div>
+        <div style="flex: 1;">
+          <label for="sliderOrder" style="display:block; margin-bottom: 5px; font-weight:500;">Display Order</label>
+          <input type="number" id="sliderOrder" placeholder="0">
+        </div>
+        <div>
+          <button onclick="addSlide()" style="margin-bottom: 16px;">Add Slide</button>
+        </div>
+      </div>
+
+      <h3>Active Slider Banners</h3>
+      <div class="slider-list-container" id="sliderList">
+        <p>Loading slides...</p>
+      </div>
+    </div>
+
+    <!-- PRODUCTS -->
+    <div class="panel" style="max-width: 100%; overflow-x: auto;">
+      <h2>Manage Products</h2>
+      <p class="hint">Create new product entries and delete old ones.</p>
+
+      <div style="background: #fbf9f7; padding: 20px; border-radius: 6px; border: 1px solid #eee; margin-bottom: 30px;">
+        <h3>Add New Product</h3>
+        <div class="row">
+          <div style="flex: 1;">
+            <label for="name" style="display:block; margin-bottom: 5px; font-weight:500;">Product Name</label>
+            <input type="text" id="name" placeholder="e.g. Antique Bridal Necklace">
+          </div>
+          <div style="flex: 1;">
+            <label for="modelNo" style="display:block; margin-bottom: 5px; font-weight:500;">Model Number</label>
+            <input type="text" id="modelNo" placeholder="e.g. HT-1002">
+          </div>
+        </div>
+        <div class="row">
+          <div style="flex: 1;">
+            <label for="category" style="display:block; margin-bottom: 5px; font-weight:500;">Category</label>
+            <select id="category">
+              <option value="">Select Category</option>
+            </select>
+          </div>
+          <div style="flex: 1;">
+            <label for="price" style="display:block; margin-bottom: 5px; font-weight:500;">Price (INR)</label>
+            <input type="number" id="price" placeholder="e.g. 45000">
+          </div>
+        </div>
+
+        <label for="description" style="display:block; margin-bottom: 5px; font-weight:500;">Description</label>
+        <textarea id="description" rows="3" placeholder="Describe the item's specifications..."></textarea>
+
+        <label for="image" style="display:block; margin-bottom: 5px; font-weight:500;">Product Image</label>
+        <input type="file" id="image" accept="image/*">
+
+        <button class="primary" onclick="addProduct()">Add Product</button>
+      </div>
+
+      <h3>Product Catalog</h3>
+      <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+          <tr>
+            <th>Image</th>
+            <th>Name</th>
+            <th>Model No</th>
+            <th>Category</th>
+            <th>Price</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="productListTable">
+          <tr>
+            <td colspan="6" style="text-align: center; padding: 20px;">Loading product catalog...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <script src="admin.js"></script>
+</body>
+
+</html>
