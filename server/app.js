@@ -3,7 +3,16 @@ const mongoose = require("mongoose");
 mongoose.set("bufferCommands", false);
 const session = require("express-session");
 const path = require("path");
+const fs = require("fs");
 require("dotenv").config();
+
+// Ensure uploads folder exists dynamically on startup (important for Git-ignored directories on cloud hosts)
+const uploadsDir = path.join(__dirname, "uploads");
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+  console.log("Local uploads directory initialized successfully.");
+}
+
 
 const app = express();
 
