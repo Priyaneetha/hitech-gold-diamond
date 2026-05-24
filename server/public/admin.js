@@ -63,10 +63,17 @@ function loadCategories() {
     .then(categories => {
       // Populate category dropdown in product form
       const dropdown = document.getElementById("category");
+      const editDropdown = document.getElementById("editCategory");
       if (dropdown) {
         dropdown.innerHTML = '<option value="">Select Category</option>';
         categories.forEach(cat => {
           dropdown.innerHTML += `<option value="${cat._id}">${cat.name}</option>`;
+        });
+      }
+      if (editDropdown) {
+        editDropdown.innerHTML = '<option value="">Select Category</option>';
+        categories.forEach(cat => {
+          editDropdown.innerHTML += `<option value="${cat._id}">${cat.name}</option>`;
         });
       }
 
@@ -127,11 +134,14 @@ function deleteCategory(id) {
   .catch(() => alert("Failed to delete category"));
 }
 
-/* PRODUCTS */
+//* PRODUCTS */
+let currentProducts = [];
+
 function loadProducts() {
   fetch("/api/products")
     .then(res => res.json())
     .then(products => {
+      currentProducts = products;
       const prodList = document.getElementById("productListTable");
       if (prodList) {
         prodList.innerHTML = "";
@@ -160,6 +170,7 @@ function loadProducts() {
                   </span>
                 </td>
                 <td>
+                  <button class="btn-edit-sm" onclick="openEditModal('${p._id}')">Edit</button>
                   <button class="btn-danger-sm" onclick="deleteProduct('${p._id}')">Delete</button>
                 </td>
               </tr>
@@ -185,6 +196,92 @@ function toggleProductStock(id, currentStatus) {
   .catch(err => {
     console.error("Failed to toggle stock status:", err);
     alert("Failed to toggle availability status");
+  });
+}
+
+function openEditModal(productId) {
+  const product = currentProducts.find(p => p._id === productId);
+  if (!product) {
+    alert("Product details could not be found.");
+    return;
+  }
+
+  // Populate inputs
+  document.getElementById("editProductId").value = product._id;
+  document.getElementById("editName").value = product.name || "";
+  document.getElementById("editModelNo").value = product.modelNo || "";
+  document.getElementById("editCategory").value = product.category ? (product.category._id || product.category) : "";
+  document.getElementById("editPrice").value = product.price || "";
+  document.getElementById("editDescription").value = product.description || "";
+  document.getElementById("editInStock").checked = product.inStock !== false;
+
+  // Set existing image name tag
+  const imageNameTag = document.getElementById("currentImageName");
+  if (imageNameTag) {
+    if (product.image) {
+      const parts = product.image.split("/");
+      imageNameTag.innerText = "Current Image: " + parts[parts.length - 1];
+    } else {
+      imageNameTag.innerText = "No image currently set.";
+    }
+  }
+
+  // Display modal
+  const editModal = document.getElementById("editProductModal");
+  if (editModal) {
+    editModal.style.display = "flex";
+  }
+}
+
+function closeEditModal() {
+  const editModal = document.getElementById("editProductModal");
+  if (editModal) {
+    editModal.style.display = "none";
+  }
+  // Clear file input
+  const fileInput = document.getElementById("editImage");
+  if (fileInput) fileInput.value = "";
+}
+
+function submitEditProduct() {
+  const id = document.getElementById("editProductId").value;
+  const name = document.getElementById("editName").value.trim();
+  const modelNo = document.getElementById("editModelNo").value.trim();
+  const category = document.getElementById("editCategory").value;
+  const price = document.getElementById("editPrice").value;
+  const description = document.getElementById("editDescription").value.trim();
+  const image = document.getElementById("editImage").files[0];
+  const inStock = document.getElementById("editInStock").checked;
+
+  if (!id || !name || !category || !price) {
+    alert("Name, category, and price are required to save changes.");
+    return;
+  }
+
+  const data = new FormData();
+  data.append("name", name);
+  data.append("modelNo", modelNo);
+  data.append("category", category);
+  data.append("price", price);
+  data.append("description", description);
+  data.append("inStock", inStock);
+  if (image) {
+    data.append("image", image);
+  }
+
+  fetch(`/api/products/${id}`, {
+    method: "PUT",
+    body: data
+  })
+  .then(res => {
+    if (!res.ok) throw new Error("Unauthorized or Bad Request");
+    alert("Product updated successfully!");
+    closeEditModal();
+    loadProducts();
+  })
+  .catch(err => {
+    console.error("Update product error:", err);
+    alert("Failed to update product details.");
   });
 }
 
@@ -234,7 +331,6 @@ function addProduct() {
   .catch(() => alert("Failed to add product (unauthorized or server error)"));
 }
 
-
 function deleteProduct(id) {
   if (!confirm("Are you sure you want to delete this product?")) return;
 
@@ -248,6 +344,7 @@ function deleteProduct(id) {
   })
   .catch(() => alert("Failed to delete product"));
 }
+
 
 /* SLIDERS */
 function loadSliders() {

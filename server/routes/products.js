@@ -123,6 +123,123 @@ router.get("/:id", async (req, res, next) => {
   }
 });
 
+/* UPDATE PRODUCT */
+router.put("/:id", isAdmin, upload.single("image"), async (req, res, next) => {
+  try {
+    const { name, modelNo, category, price, description, inStock } = req.body;
+
+    if (!name || !category || !price) {
+      if (req.file) {
+        await fs.unlink(req.file.path).catch(err => console.error("Error cleaning up file:", err));
+      }
+      return res.status(400).json({ message: "Name, category, and price are required." });
+    }
+
+    const isAvailable = inStock === undefined || inStock === "true" || inStock === true;
+
+    if (mongoose.connection.readyState !== 1) {
+      console.log("DB Offline: Updating Product in Demo Mode");
+      const index = demoDb.products.findIndex(p => p._id === req.params.id);
+      if (index === -1) {
+        if (req.file) {
+          await fs.unlink(req.file.path).catch(err => console.error("Error cleaning up file:", err));
+        }
+        return res.status(404).json({ message: "Product not found." });
+      }
+
+      const foundCategory = demoDb.categories.find(c => c._id === category);
+      if (!foundCategory) {
+        if (req.file) {
+          await fs.unlink(req.file.path).catch(err => console.error("Error cleaning up file:", err));
+        }
+        return res.status(404).json({ message: "Selected category does not exist." });
+      }
+
+      const oldProduct = demoDb.products[index];
+      let imagePath = oldProduct.image;
+
+      if (req.file) {
+        // Delete old image file
+        if (oldProduct.image && !oldProduct.image.startsWith("/logo")) {
+          const fileName = path.basename(oldProduct.image);
+          const filePath = path.join(__dirname, "..", "uploads", fileName);
+          await fs.unlink(filePath).catch(err => console.warn("Failed to delete old image:", err.message));
+        }
+        imagePath = `/uploads/${req.file.filename}`;
+      }
+
+      demoDb.products[index] = {
+        ...oldProduct,
+        name,
+        modelNo,
+        category: foundCategory,
+        price: Number(price),
+        description: description || "",
+        inStock: isAvailable,
+        image: imagePath
+      };
+
+      return res.json({ message: "Product updated", product: demoDb.products[index] });
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      if (req.file) {
+        await fs.unlink(req.file.path).catch(err => console.error("Error cleaning up file:", err));
+      }
+      return res.status(400).json({ message: "Invalid product ID format." });
+    }
+
+    // Validate category
+    if (!mongoose.Types.ObjectId.isValid(category)) {
+      if (req.file) {
+        await fs.unlink(req.file.path).catch(err => console.error("Error cleaning up file:", err));
+      }
+      return res.status(400).json({ message: "Invalid category ID format." });
+    }
+
+    const categoryExists = await Category.findById(category);
+    if (!categoryExists) {
+      if (req.file) {
+        await fs.unlink(req.file.path).catch(err => console.error("Error cleaning up file:", err));
+      }
+      return res.status(404).json({ message: "Selected category does not exist." });
+    }
+
+    const product = await Product.findById(req.params.id);
+    if (!product) {
+      if (req.file) {
+        await fs.unlink(req.file.path).catch(err => console.error("Error cleaning up file:", err));
+      }
+      return res.status(404).json({ message: "Product not found." });
+    }
+
+    let imagePath = product.image;
+    if (req.file) {
+      // Delete old image
+      if (product.image && !product.image.startsWith("/logo")) {
+        const fileName = path.basename(product.image);
+        const filePath = path.join(__dirname, "..", "uploads", fileName);
+        await fs.unlink(filePath).catch(err => console.warn("Failed to delete old image:", err.message));
+      }
+      imagePath = `/uploads/${req.file.filename}`;
+    }
+
+    product.name = name;
+    product.modelNo = modelNo;
+    product.category = category;
+    product.price = Number(price);
+    product.description = description;
+    product.inStock = isAvailable;
+    product.image = imagePath;
+
+    await product.save();
+    res.json({ message: "Product updated successfully", product });
+  } catch (err) {
+    next(err);
+  }
+});
+
+
 /* DELETE PRODUCT */
 router.delete("/:id", isAdmin, async (req, res, next) => {
   try {
