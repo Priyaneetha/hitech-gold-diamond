@@ -460,15 +460,18 @@ html {
 }
 
 .btn-whatsapp {
-  background: #25d366;
-  color: white;
-  border: none;
+  background: #1b4231; /* Subtle deep emerald */
+  color: var(--gold-soft);
+  border: 1px solid var(--gold-soft);
 }
 
 .btn-whatsapp:hover {
-  background: #20ba5a;
+  background: #122c21; /* Darker emerald */
+  color: var(--white);
   transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(27, 66, 49, 0.2);
 }
+
 
 .btn-call {
   background: var(--wine);
