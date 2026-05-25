@@ -331,3 +331,53 @@ fetch("/api/contact")
     }
   })
   .catch(err => console.error("Error loading contact info in footer:", err));
+
+/* SPECIAL OFFERS FOR LANDING PAGE SHOWCASE */
+if (document.getElementById("promoBanners")) {
+  fetch("/api/offers")
+    .then(res => res.json())
+    .then(offers => {
+      const promotionsSection = document.getElementById("promotionsSection");
+      const promoBanners = document.getElementById("promoBanners");
+      if (!promotionsSection || !promoBanners) return;
+
+      if (Array.isArray(offers) && offers.length > 0) {
+        promotionsSection.style.display = "block";
+        promoBanners.innerHTML = "";
+
+        // Limit home page showcase to latest 3 offers
+        const latestOffers = offers.slice(0, 3);
+        
+        // Fetch WhatsApp contact details dynamically to populate on inquiry buttons
+        fetch("/api/contact")
+          .then(res => res.json())
+          .catch(() => null)
+          .then(contact => {
+            const waNumber = contact && contact.whatsapp ? contact.whatsapp : "919447384746";
+            
+            latestOffers.forEach(offer => {
+              const imagePath = offer.image || "/logo.png";
+              const encodedMsg = encodeURIComponent(`Hi! I'm interested in the Special Offer: "${offer.title}". Please provide more details.`);
+              
+              promoBanners.innerHTML += `
+                <div class="promo-card fade-in">
+                  <div class="promo-img-box">
+                    <img src="${imagePath}" alt="${offer.title}">
+                  </div>
+                  <div class="promo-info">
+                    <h3>${offer.title}</h3>
+                    <p>${offer.description || ""}</p>
+                    <a href="https://wa.me/${waNumber}?text=${encodedMsg}" target="_blank" class="btn-promo-inquire">
+                      Inquire on WhatsApp
+                    </a>
+                  </div>
+                </div>
+              `;
+            });
+          });
+      } else {
+        promotionsSection.style.display = "none";
+      }
+    })
+    .catch(err => console.error("Error loading promotional offers on home page:", err));
+}

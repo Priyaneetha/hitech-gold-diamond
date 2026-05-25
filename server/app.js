@@ -100,6 +100,7 @@ app.use("/api/goldrate", require("./routes/goldrate"));
 app.use("/api/sliders", require("./routes/sliders"));
 app.use("/api/tagline", require("./routes/tagline"));
 app.use("/api/contact", require("./routes/contact"));
+app.use("/api/offers", require("./routes/offers"));
 
 /* Frontend */
 app.get("/", (req, res) => {

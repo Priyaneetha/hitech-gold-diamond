@@ -48,6 +48,15 @@ const demoDb = {
       order: 1,
       active: true
     }
+  ],
+  offers: [
+    {
+      _id: "offer_1",
+      title: "Gold Sovereign Celebrations",
+      description: "Get a free 916 BIS Hallmark 1-gram gold coin on purchasing bridal jewelry sets above ₹2,00,000. Limited time festive offer!",
+      image: "/logo.png",
+      active: true
+    }
   ]
 };
 

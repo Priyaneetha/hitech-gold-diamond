@@ -21,6 +21,7 @@
     <nav class="nav-links">
       <a href="/">Home</a>
       <a href="collections.html">Collections</a>
+      <a href="offers.html">Offers</a>
       <a href="#contact">Contact</a>
     </nav>
   </header>
@@ -42,7 +43,24 @@
     <div class="rate-box">
       <span class="label">Today's Gold Rate</span>
       <span id="goldRate" class="price">₹ —</span>
-      <span class="sub">Per gram · 8 grams</span>
+
+    </div>
+  </section>
+
+  <!-- SPECIAL OFFERS SHOWCASE (DYNAMICALLY SHOWN ONLY IF ACTIVE OFFERS EXIST) -->
+  <section class="special-promotions fade-in" id="promotionsSection" style="display: none;">
+    <div class="promotions-container">
+      <div class="promotions-header">
+        <span class="promo-badge">Festive Specials</span>
+        <h2>Exclusive Special Offers</h2>
+        <p>Discover dynamic rewards and seasonal delights curated especially for you.</p>
+      </div>
+      <div class="promo-banner-wrapper" id="promoBanners">
+        <!-- Dynamically loaded active offers will populate here -->
+      </div>
+      <div class="promo-action">
+        <a href="offers.html" class="btn-view-all-offers">View All Active Offers</a>
+      </div>
     </div>
   </section>
 
@@ -62,11 +80,12 @@
           elegant daily wear rings, we promise trust, excellence, and a memorable experience.
         </p>
       </div>
-      
+
       <div class="about-features">
         <div class="feature-card">
           <div class="feature-icon-wrapper">
-            <svg class="feature-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <svg class="feature-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+              stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="9"></circle>
               <circle cx="12" cy="12" r="5" stroke-dasharray="2 2"></circle>
               <path d="M9 12l2 2 4-4"></path>
@@ -80,7 +99,8 @@
 
         <div class="feature-card">
           <div class="feature-icon-wrapper">
-            <svg class="feature-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <svg class="feature-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+              stroke-linecap="round" stroke-linejoin="round">
               <path d="M6 3h12l4 6-10 12L2 9z"></path>
               <path d="M11 3l-3 6 4 12"></path>
               <path d="M13 3l3 6-4 12"></path>
@@ -95,7 +115,8 @@
 
         <div class="feature-card">
           <div class="feature-icon-wrapper">
-            <svg class="feature-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <svg class="feature-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+              stroke-linecap="round" stroke-linejoin="round">
               <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
               <path d="M12 8v8"></path>
               <path d="M9 11h6"></path>

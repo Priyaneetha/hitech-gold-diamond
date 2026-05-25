@@ -132,6 +132,60 @@
       </div>
     </div>
 
+    <!-- SPECIAL OFFERS -->
+    <div class="panel">
+      <h2>Manage Special Offers</h2>
+      <p class="hint">Upload promotional banners and special discount offers to highlight on the landing page and storefront.</p>
+      
+      <div style="background: #fbf9f7; padding: 20px; border-radius: 6px; border: 1px solid #eee; margin-bottom: 30px;">
+        <h3>Add New Offer</h3>
+        <div class="row">
+          <div style="flex: 2;">
+            <label for="offerTitle" style="display:block; margin-bottom: 5px; font-weight:500;">Offer Title</label>
+            <input type="text" id="offerTitle" placeholder="e.g. Akshaya Tritiya Gold Celebrations">
+          </div>
+          <div style="flex: 1;">
+            <label for="offerImage" style="display:block; margin-bottom: 5px; font-weight:500;">Offer Banner Image</label>
+            <input type="file" id="offerImage" accept="image/*">
+          </div>
+        </div>
+        
+        <div class="row">
+          <div style="flex: 1;">
+            <label for="offerStartDate" style="display:block; margin-bottom: 5px; font-weight:500;">Start Date (Optional)</label>
+            <input type="date" id="offerStartDate">
+          </div>
+          <div style="flex: 1;">
+            <label for="offerEndDate" style="display:block; margin-bottom: 5px; font-weight:500;">End Date (Optional)</label>
+            <input type="date" id="offerEndDate">
+          </div>
+        </div>
+
+        <label for="offerDescription" style="display:block; margin-bottom: 5px; font-weight:500;">Description (Optional)</label>
+        <textarea id="offerDescription" rows="3" placeholder="Describe the special offer (e.g. Free 1-gram coin on purchasing bridal jewelry)..."></textarea>
+        
+        <button class="primary" onclick="addOffer()" style="margin-top: 15px;">Add Offer</button>
+      </div>
+
+      <h3>Existing Special Offers</h3>
+      <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+          <tr>
+            <th>Banner</th>
+            <th>Title</th>
+            <th>Validity Period</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="offersListTable">
+          <tr>
+            <td colspan="5" style="text-align: center; padding: 20px;">Loading special offers...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
     <!-- PRODUCTS -->
     <div class="panel" style="max-width: 100%; overflow-x: auto;">
       <h2>Manage Products</h2>

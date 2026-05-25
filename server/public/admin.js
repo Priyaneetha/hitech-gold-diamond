@@ -17,6 +17,7 @@ function loadDashboardData() {
   loadCategories();
   loadProducts();
   loadSliders();
+  loadOffers();
   loadTagline();
   loadContact();
 }
@@ -532,4 +533,144 @@ function logout() {
   .catch(() => {
     window.location.href = "/admin.html";
   });
+}
+
+/* SPECIAL OFFERS */
+function loadOffers() {
+  fetch("/api/offers/all")
+    .then(res => res.json())
+    .then(offers => {
+      const offersList = document.getElementById("offersListTable");
+      if (!offersList) return;
+
+      if (!Array.isArray(offers)) {
+        console.error("Unexpected response for offers:", offers);
+        offersList.innerHTML = `<tr><td colspan="5" style="text-align:center; color:red;">Failed to load offers.</td></tr>`;
+        return;
+      }
+
+      offersList.innerHTML = "";
+      if (offers.length === 0) {
+        offersList.innerHTML = `<tr><td colspan="5" style="text-align:center;">No offers found.</td></tr>`;
+      } else {
+        offers.forEach(offer => {
+          const imageTag = offer.image ? `<img src="${offer.image}" class="thumbnail-img">` : "No Image";
+          
+          // Form validity string
+          let validity = "Always Active";
+          if (offer.startDate || offer.endDate) {
+            const startStr = offer.startDate ? new Date(offer.startDate).toLocaleDateString() : "...";
+            const endStr = offer.endDate ? new Date(offer.endDate).toLocaleDateString() : "...";
+            validity = `${startStr} to ${endStr}`;
+          }
+
+          const active = offer.active !== false;
+          const badgeClass = active ? "badge-instock" : "badge-outofstock";
+          const badgeText = active ? "Active" : "Inactive";
+
+          offersList.innerHTML += `
+            <tr>
+              <td>${imageTag}</td>
+              <td><strong>${offer.title}</strong><div style="font-size:12px; color:#666;">${offer.description || ""}</div></td>
+              <td>${validity}</td>
+              <td>
+                <span class="badge-stock ${badgeClass}" onclick="toggleOfferActive('${offer._id}', ${active})">
+                  ${badgeText}
+                </span>
+              </td>
+              <td>
+                <button class="btn-danger-sm" onclick="deleteOffer('${offer._id}')">Delete</button>
+              </td>
+            </tr>
+          `;
+        });
+      }
+    })
+    .catch(err => {
+      console.error("Error loading offers:", err);
+      const offersList = document.getElementById("offersListTable");
+      if (offersList) {
+        offersList.innerHTML = `<tr><td colspan="5" style="text-align:center; color:red;">Error loading offers.</td></tr>`;
+      }
+    });
+}
+
+function addOffer() {
+  const title = document.getElementById("offerTitle").value.trim();
+  const image = document.getElementById("offerImage").files[0];
+  const startDate = document.getElementById("offerStartDate").value;
+  const endDate = document.getElementById("offerEndDate").value;
+  const description = document.getElementById("offerDescription").value.trim();
+
+  if (!title) {
+    alert("Offer title is required.");
+    return;
+  }
+  if (!image) {
+    alert("An image file is required for the offer banner.");
+    return;
+  }
+
+  const data = new FormData();
+  data.append("title", title);
+  data.append("image", image);
+  if (startDate) data.append("startDate", startDate);
+  if (endDate) data.append("endDate", endDate);
+  if (description) data.append("description", description);
+
+  fetch("/api/offers", {
+    method: "POST",
+    body: data
+  })
+    .then(res => {
+      if (!res.ok) {
+        return res.json().then(err => {
+          throw new Error(err.error || err.message || "Failed to add offer");
+        }).catch(() => {
+          throw new Error("Failed to add offer");
+        });
+      }
+      return res.json();
+    })
+    .then(() => {
+      alert("Special Offer added successfully");
+      document.getElementById("offerTitle").value = "";
+      document.getElementById("offerImage").value = "";
+      document.getElementById("offerStartDate").value = "";
+      document.getElementById("offerEndDate").value = "";
+      document.getElementById("offerDescription").value = "";
+      loadOffers();
+    })
+    .catch(err => {
+      console.error("Add offer error:", err);
+      alert(err.message || "Failed to add special offer");
+    });
+}
+
+function toggleOfferActive(id, currentStatus) {
+  fetch(`/api/offers/${id}/toggle`, {
+    method: "PATCH"
+  })
+    .then(res => {
+      if (!res.ok) throw new Error("Unauthorized or Bad Request");
+      loadOffers();
+    })
+    .catch(err => {
+      console.error("Failed to toggle offer status:", err);
+      alert("Failed to toggle offer active status");
+    });
+}
+
+function deleteOffer(id) {
+  if (!confirm("Are you sure you want to delete this special offer?")) return;
+
+  fetch(`/api/offers/${id}`, {
+    method: "DELETE"
+  })
+    .then(res => {
+      if (!res.ok) throw new Error("Unauthorized");
+      alert("Offer deleted successfully");
+      loadOffers();
+    })
+    .catch(() => alert("Failed to delete special offer"));
 }
