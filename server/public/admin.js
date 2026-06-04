@@ -164,7 +164,7 @@ function loadProducts() {
                 <td><strong>${p.name}</strong></td>
                 <td>${p.modelNo || "-"}</td>
                 <td>${catName}</td>
-                <td>₹ ${Number(p.price).toLocaleString("en-IN")}</td>
+                 <td>${Number(p.price)} g</td>
                 <td>
                   <span class="badge-stock ${badgeClass}" onclick="toggleProductStock('${p._id}', ${inStock})">
                     ${badgeText}
@@ -255,7 +255,7 @@ function submitEditProduct() {
   const inStock = document.getElementById("editInStock").checked;
 
   if (!id || !name || !category || !price) {
-    alert("Name, category, and price are required to save changes.");
+    alert("Name, category, and weight are required to save changes.");
     return;
   }
 
@@ -309,7 +309,7 @@ function addProduct() {
   const inStock = inStockCheckbox ? inStockCheckbox.checked : true;
 
   if (!name || !category || !price) {
-    alert("Name, category, and price are required.");
+    alert("Name, category, and weight are required.");
     return;
   }
 

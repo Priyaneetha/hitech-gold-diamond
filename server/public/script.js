@@ -152,7 +152,7 @@ if (document.getElementById("collectionGrid")) {
               <h3>${p.name}</h3>
               <div style="display:flex; justify-content:space-between; margin-top:8px; align-items: center;">
                 <span style="font-size:12px; text-transform:uppercase; color:#999; font-family:'Inter', sans-serif;">${categoryName}</span>
-                <span style="font-weight:600; color:var(--wine-dark); font-family:'Inter', sans-serif;">₹ ${p.price.toLocaleString("en-IN")}</span>
+                <span style="font-weight:600; color:var(--wine-dark); font-family:'Inter', sans-serif;">${p.price} g</span>
               </div>
             </div>
           </div>
