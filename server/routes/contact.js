@@ -60,25 +60,23 @@ router.get("/", async (req, res, next) => {
       return res.json(demoDb.contact);
     }
 
-    let contact = await Contact.findOne({ active: true });
+    const contact = await Contact.findOne({ active: true });
     
-    // Fallback if none seeded/saved yet
-    if (!contact) {
-      contact = {
-        phone: "+91 9447384746",
-        phone2: "",
-        phone3: "",
-        phone4: "",
-        whatsapp: "919447384746",
-        whatsapp2: "",
-        instagram: "",
-        facebook: "",
-        email: "",
-        address: "Kuttiadi, Kerala, India"
-      };
-    }
+    // Fallback and merge missing fields with defaults from demoDb.contact
+    const responseData = {
+      phone: (contact && contact.phone) || demoDb.contact.phone,
+      phone2: (contact && contact.phone2) || demoDb.contact.phone2,
+      phone3: (contact && contact.phone3) || demoDb.contact.phone3,
+      phone4: (contact && contact.phone4) || demoDb.contact.phone4,
+      whatsapp: (contact && contact.whatsapp) || demoDb.contact.whatsapp,
+      whatsapp2: (contact && contact.whatsapp2) || demoDb.contact.whatsapp2,
+      instagram: (contact && contact.instagram) || demoDb.contact.instagram,
+      facebook: (contact && contact.facebook) || demoDb.contact.facebook,
+      email: (contact && contact.email) || demoDb.contact.email,
+      address: (contact && contact.address) || demoDb.contact.address
+    };
     
-    res.json(contact);
+    res.json(responseData);
   } catch (err) {
     next(err);
   }
