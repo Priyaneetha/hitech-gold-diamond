@@ -16,22 +16,33 @@ router.post("/", isAdmin, async (req, res, next) => {
       address 
     } = req.body;
 
-    if (!phone || !whatsapp || !address) {
+    const cleanPhone = (phone || "").trim();
+    const cleanPhone2 = (phone2 || "").trim();
+    const cleanPhone3 = (phone3 || "").trim();
+    const cleanPhone4 = (phone4 || "").trim();
+    const cleanWhatsapp = (whatsapp || "").trim();
+    const cleanWhatsapp2 = (whatsapp2 || "").trim();
+    const cleanInstagram = (instagram || "").trim();
+    const cleanFacebook = (facebook || "").trim();
+    const cleanEmail = (email || "").trim();
+    const cleanAddress = (address || "").trim();
+
+    if (!cleanPhone || !cleanWhatsapp || !cleanAddress) {
       return res.status(400).json({ message: "Primary Phone, Primary WhatsApp, and Address are required." });
     }
 
     if (mongoose.connection.readyState !== 1) {
       console.log("DB Offline: Updating Contact Details in Demo Mode");
-      demoDb.contact.phone = phone;
-      demoDb.contact.phone2 = phone2 || "";
-      demoDb.contact.phone3 = phone3 || "";
-      demoDb.contact.phone4 = phone4 || "";
-      demoDb.contact.whatsapp = whatsapp;
-      demoDb.contact.whatsapp2 = whatsapp2 || "";
-      demoDb.contact.instagram = instagram || "";
-      demoDb.contact.facebook = facebook || "";
-      demoDb.contact.email = email || "";
-      demoDb.contact.address = address;
+      demoDb.contact.phone = cleanPhone;
+      demoDb.contact.phone2 = cleanPhone2;
+      demoDb.contact.phone3 = cleanPhone3;
+      demoDb.contact.phone4 = cleanPhone4;
+      demoDb.contact.whatsapp = cleanWhatsapp;
+      demoDb.contact.whatsapp2 = cleanWhatsapp2;
+      demoDb.contact.instagram = cleanInstagram;
+      demoDb.contact.facebook = cleanFacebook;
+      demoDb.contact.email = cleanEmail;
+      demoDb.contact.address = cleanAddress;
       return res.send("Contact details updated");
     }
 
@@ -39,10 +50,17 @@ router.post("/", isAdmin, async (req, res, next) => {
     await Contact.findOneAndUpdate(
       { active: true },
       { 
-        phone, phone2: phone2 || "", phone3: phone3 || "", phone4: phone4 || "", 
-        whatsapp, whatsapp2: whatsapp2 || "", 
-        instagram: instagram || "", facebook: facebook || "", email: email || "",
-        address, active: true 
+        phone: cleanPhone, 
+        phone2: cleanPhone2, 
+        phone3: cleanPhone3, 
+        phone4: cleanPhone4, 
+        whatsapp: cleanWhatsapp, 
+        whatsapp2: cleanWhatsapp2, 
+        instagram: cleanInstagram, 
+        facebook: cleanFacebook, 
+        email: cleanEmail,
+        address: cleanAddress, 
+        active: true 
       },
       { upsert: true, new: true, setDefaultsOnInsert: true }
     );
@@ -64,16 +82,16 @@ router.get("/", async (req, res, next) => {
     
     // Fallback and merge missing fields with defaults from demoDb.contact
     const responseData = {
-      phone: (contact && contact.phone) || demoDb.contact.phone,
-      phone2: (contact && contact.phone2) || demoDb.contact.phone2,
-      phone3: (contact && contact.phone3) || demoDb.contact.phone3,
-      phone4: (contact && contact.phone4) || demoDb.contact.phone4,
-      whatsapp: (contact && contact.whatsapp) || demoDb.contact.whatsapp,
-      whatsapp2: (contact && contact.whatsapp2) || demoDb.contact.whatsapp2,
-      instagram: (contact && contact.instagram) || demoDb.contact.instagram,
-      facebook: (contact && contact.facebook) || demoDb.contact.facebook,
-      email: (contact && contact.email) || demoDb.contact.email,
-      address: (contact && contact.address) || demoDb.contact.address
+      phone: (contact && contact.phone && contact.phone.trim()) || demoDb.contact.phone,
+      phone2: (contact && contact.phone2 && contact.phone2.trim()) || demoDb.contact.phone2,
+      phone3: (contact && contact.phone3 && contact.phone3.trim()) || demoDb.contact.phone3,
+      phone4: (contact && contact.phone4 && contact.phone4.trim()) || demoDb.contact.phone4,
+      whatsapp: (contact && contact.whatsapp && contact.whatsapp.trim()) || demoDb.contact.whatsapp,
+      whatsapp2: (contact && contact.whatsapp2 && contact.whatsapp2.trim()) || demoDb.contact.whatsapp2,
+      instagram: (contact && contact.instagram && contact.instagram.trim()) || demoDb.contact.instagram,
+      facebook: (contact && contact.facebook && contact.facebook.trim()) || demoDb.contact.facebook,
+      email: (contact && contact.email && contact.email.trim()) || demoDb.contact.email,
+      address: (contact && contact.address && contact.address.trim()) || demoDb.contact.address
     };
     
     res.json(responseData);

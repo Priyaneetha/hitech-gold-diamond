@@ -366,20 +366,26 @@
         
         if (shopContact.instagram) {
           const igUrl = shopContact.instagram.startsWith("http") ? shopContact.instagram : `https://instagram.com/${shopContact.instagram}`;
-          const igLabel = shopContact.instagram.startsWith("http") ? "Instagram" : `@${shopContact.instagram}`;
+          const igLabel = getInstagramLabel(shopContact.instagram);
           socialsList.innerHTML += `
             <p class="footer-social-item">
-              <a href="${igUrl}" target="_blank" class="footer-link-ig">Instagram: <strong>${igLabel}</strong></a>
+              <a href="${igUrl}" target="_blank" class="footer-link-ig" style="color:#FFFCFC;">
+                <svg class="footer-icon icon-ig" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px; vertical-align:middle; color:#E1306C;"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                <span>${igLabel}</span>
+              </a>
             </p>
           `;
         }
         
         if (shopContact.facebook) {
           const fbUrl = shopContact.facebook.startsWith("http") ? shopContact.facebook : `https://facebook.com/${shopContact.facebook}`;
-          const fbLabel = shopContact.facebook.startsWith("http") ? "Facebook" : shopContact.facebook;
+          const fbLabel = getFacebookLabel(shopContact.facebook);
           socialsList.innerHTML += `
             <p class="footer-social-item">
-              <a href="${fbUrl}" target="_blank" class="footer-link-fb">Facebook: <strong>${fbLabel}</strong></a>
+              <a href="${fbUrl}" target="_blank" class="footer-link-fb" style="color:#FFFCFC;">
+                <svg class="footer-icon icon-fb" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px; vertical-align:middle; color:#1877F2;"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+                <span>${fbLabel}</span>
+              </a>
             </p>
           `;
         }
@@ -387,7 +393,10 @@
         if (shopContact.email) {
           socialsList.innerHTML += `
             <p class="footer-social-item">
-              <a href="mailto:${shopContact.email}" class="footer-link-email">Email: <strong>${shopContact.email}</strong></a>
+              <a href="mailto:${shopContact.email}" class="footer-link-email">
+                <svg class="footer-icon icon-email" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px; vertical-align:middle; color:var(--gold-soft);"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                <span>${shopContact.email}</span>
+              </a>
             </p>
           `;
         }
