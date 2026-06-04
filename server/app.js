@@ -4,7 +4,7 @@ mongoose.set("bufferCommands", false);
 const session = require("express-session");
 const path = require("path");
 const fs = require("fs");
-require("dotenv").config();
+require("dotenv").config({ override: true });
 
 // Ensure uploads folder exists dynamically on startup (important for Git-ignored directories on cloud hosts)
 const uploadsDir = path.join(__dirname, "uploads");
