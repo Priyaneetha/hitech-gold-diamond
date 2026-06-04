@@ -6,10 +6,38 @@ const contactSchema = new mongoose.Schema({
     required: true,
     default: "+91 9447384746"
   },
+  phone2: {
+    type: String,
+    default: ""
+  },
+  phone3: {
+    type: String,
+    default: ""
+  },
+  phone4: {
+    type: String,
+    default: ""
+  },
   whatsapp: {
     type: String,
     required: true,
     default: "919447384746"
+  },
+  whatsapp2: {
+    type: String,
+    default: ""
+  },
+  instagram: {
+    type: String,
+    default: ""
+  },
+  facebook: {
+    type: String,
+    default: ""
+  },
+  email: {
+    type: String,
+    default: ""
   },
   address: {
     type: String,

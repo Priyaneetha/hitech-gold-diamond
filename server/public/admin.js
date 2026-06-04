@@ -492,7 +492,14 @@ function loadContact() {
     .then(data => {
       if (data) {
         document.getElementById("contactPhone").value = data.phone || "";
+        document.getElementById("contactPhone2").value = data.phone2 || "";
+        document.getElementById("contactPhone3").value = data.phone3 || "";
+        document.getElementById("contactPhone4").value = data.phone4 || "";
         document.getElementById("contactWhatsApp").value = data.whatsapp || "";
+        document.getElementById("contactWhatsApp2").value = data.whatsapp2 || "";
+        document.getElementById("contactInstagram").value = data.instagram || "";
+        document.getElementById("contactFacebook").value = data.facebook || "";
+        document.getElementById("contactEmail").value = data.email || "";
         document.getElementById("contactAddress").value = data.address || "";
       }
     })
@@ -501,18 +508,30 @@ function loadContact() {
 
 function updateContact() {
   const phone = document.getElementById("contactPhone").value.trim();
+  const phone2 = document.getElementById("contactPhone2").value.trim();
+  const phone3 = document.getElementById("contactPhone3").value.trim();
+  const phone4 = document.getElementById("contactPhone4").value.trim();
   const whatsapp = document.getElementById("contactWhatsApp").value.trim();
+  const whatsapp2 = document.getElementById("contactWhatsApp2").value.trim();
+  const instagram = document.getElementById("contactInstagram").value.trim();
+  const facebook = document.getElementById("contactFacebook").value.trim();
+  const email = document.getElementById("contactEmail").value.trim();
   const address = document.getElementById("contactAddress").value.trim();
 
   if (!phone || !whatsapp || !address) {
-    alert("Phone, WhatsApp, and Address are required.");
+    alert("Primary Phone, Primary WhatsApp, and Address are required.");
     return;
   }
 
   fetch("/api/contact", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ phone, whatsapp, address })
+    body: JSON.stringify({ 
+      phone, phone2, phone3, phone4,
+      whatsapp, whatsapp2,
+      instagram, facebook, email,
+      address 
+    })
   })
   .then(res => {
     if (!res.ok) throw new Error("Unauthorized");

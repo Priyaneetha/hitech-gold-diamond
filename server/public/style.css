@@ -344,14 +344,116 @@ body {
   color: #666;
 }
 
-/* FOOTER */
+/* PREMIUM RESPONSIVE FOOTER */
 .footer {
   background: var(--wine);
   color: var(--gold-soft);
+  padding: 80px 60px 30px 60px;
+  font-size: 14.5px;
+  border-top: 2px solid var(--gold);
+}
+
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 2fr 1.2fr 1.2fr 1.2fr;
+  gap: 40px;
+  text-align: left;
+}
+
+.footer-col h3 {
+  color: var(--white);
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  margin: 0 0 15px 0;
+  font-weight: 500;
+}
+
+.footer-col h4 {
+  color: var(--gold);
+  font-family: 'Playfair Display', serif;
+  font-size: 17px;
+  margin: 0 0 20px 0;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+.footer-desc {
+  color: #d1b8c6;
+  line-height: 1.6;
+  margin: 0 0 20px 0;
+  font-family: 'Inter', sans-serif;
+}
+
+.footer-address {
+  color: var(--white);
+  font-weight: 500;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.footer-phones p, .footer-whatsapp p, .footer-socials p {
+  margin: 0 0 12px 0;
+  line-height: 1.5;
+}
+
+.footer-col a {
+  color: var(--white);
+  text-decoration: none;
+  transition: color 0.3s ease;
+  font-family: 'Inter', sans-serif;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer-col a:hover {
+  color: var(--gold-soft);
+}
+
+.footer-link-wa {
+  color: #25D366 !important;
+  font-weight: 500;
+}
+
+.footer-link-wa:hover {
+  color: #128C7E !important;
+}
+
+.footer-social-item strong {
+  color: var(--white);
+}
+
+.footer-bottom {
+  max-width: 1200px;
+  margin: 50px auto 0 auto;
+  padding-top: 30px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
   text-align: center;
-  padding: 60px 20px;
-  font-size: 14px;
-  letter-spacing: 0.3px;
+  color: #a48e9a;
+  font-size: 13px;
+  font-family: 'Inter', sans-serif;
+}
+
+@media (max-width: 992px) {
+  .footer-container {
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+  }
+}
+
+@media (max-width: 600px) {
+  .footer {
+    padding: 60px 20px 20px 20px;
+  }
+  .footer-container {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  .footer-bottom {
+    margin-top: 30px;
+  }
 }
 
 /* GLOBAL SMOOTHNESS */

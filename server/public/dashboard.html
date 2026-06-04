@@ -71,18 +71,62 @@
     <!-- CONTACT DETAILS -->
     <div class="panel">
       <h2>Contact Details</h2>
-      <p class="hint">Set your contact details and location address displayed on the website.</p>
+      <p class="hint">Set your contact details, location address, and social links displayed on the website.</p>
 
-      <label for="contactPhone" style="display:block; margin-bottom: 5px; font-weight:500;">Phone Number (storefront
-        display)</label>
-      <input type="text" id="contactPhone" placeholder="e.g. +91 9447384746">
+      <div class="row">
+        <div style="flex: 1;">
+          <label for="contactPhone" style="display:block; margin-bottom: 5px; font-weight:500;">Phone Number 1 (Primary)</label>
+          <input type="text" id="contactPhone" placeholder="e.g. +91 9447384746">
+        </div>
+        <div style="flex: 1;">
+          <label for="contactPhone2" style="display:block; margin-bottom: 5px; font-weight:500;">Phone Number 2 (Optional)</label>
+          <input type="text" id="contactPhone2" placeholder="e.g. +91 9447384747">
+        </div>
+      </div>
 
-      <label for="contactWhatsApp" style="display:block; margin-bottom: 5px; font-weight:500;">WhatsApp Number
-      </label>
-      <input type="text" id="contactWhatsApp" placeholder="e.g. 919447384746">
+      <div class="row">
+        <div style="flex: 1;">
+          <label for="contactPhone3" style="display:block; margin-bottom: 5px; font-weight:500;">Phone Number 3 (Optional)</label>
+          <input type="text" id="contactPhone3" placeholder="e.g. +91 9447384748">
+        </div>
+        <div style="flex: 1;">
+          <label for="contactPhone4" style="display:block; margin-bottom: 5px; font-weight:500;">Phone Number 4 (Optional)</label>
+          <input type="text" id="contactPhone4" placeholder="e.g. +91 9447384749">
+        </div>
+      </div>
 
-      <label for="contactAddress" style="display:block; margin-bottom: 5px; font-weight:500;">Address / Location</label>
-      <input type="text" id="contactAddress" placeholder="e.g. Kuttiadi, Kerala, India">
+      <div class="row">
+        <div style="flex: 1;">
+          <label for="contactWhatsApp" style="display:block; margin-bottom: 5px; font-weight:500;">WhatsApp Number 1 (Primary)</label>
+          <input type="text" id="contactWhatsApp" placeholder="e.g. 919447384746">
+        </div>
+        <div style="flex: 1;">
+          <label for="contactWhatsApp2" style="display:block; margin-bottom: 5px; font-weight:500;">WhatsApp Number 2 (Optional)</label>
+          <input type="text" id="contactWhatsApp2" placeholder="e.g. 919447384747">
+        </div>
+      </div>
+
+      <div class="row">
+        <div style="flex: 1;">
+          <label for="contactInstagram" style="display:block; margin-bottom: 5px; font-weight:500;">Instagram Username / URL (Optional)</label>
+          <input type="text" id="contactInstagram" placeholder="e.g. hitechgold">
+        </div>
+        <div style="flex: 1;">
+          <label for="contactFacebook" style="display:block; margin-bottom: 5px; font-weight:500;">Facebook Page / URL (Optional)</label>
+          <input type="text" id="contactFacebook" placeholder="e.g. hitechgoldkuttiadi">
+        </div>
+      </div>
+
+      <div class="row">
+        <div style="flex: 1;">
+          <label for="contactEmail" style="display:block; margin-bottom: 5px; font-weight:500;">Email Address (Optional)</label>
+          <input type="text" id="contactEmail" placeholder="e.g. info@hitechgold.com">
+        </div>
+        <div style="flex: 1;">
+          <label for="contactAddress" style="display:block; margin-bottom: 5px; font-weight:500;">Address / Location</label>
+          <input type="text" id="contactAddress" placeholder="e.g. Kuttiadi, Kerala, India">
+        </div>
+      </div>
 
       <button onclick="updateContact()">Update Contact Details</button>
     </div>

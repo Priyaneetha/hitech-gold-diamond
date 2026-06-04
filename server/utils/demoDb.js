@@ -10,7 +10,14 @@ const demoDb = {
   },
   contact: {
     phone: "+91 9447384746",
+    phone2: "",
+    phone3: "",
+    phone4: "",
     whatsapp: "919447384746",
+    whatsapp2: "",
+    instagram: "",
+    facebook: "",
+    email: "",
     address: "Kuttiadi, Kerala, India",
     active: true
   },
