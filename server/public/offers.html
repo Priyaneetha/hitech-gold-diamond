@@ -247,6 +247,43 @@
   </footer>
 
   <script>
+    function getInstagramLabel(input) {
+      if (!input) return "";
+      try {
+        if (input.startsWith("http")) {
+          const url = new URL(input);
+          const pathParts = url.pathname.split("/").filter(Boolean);
+          if (pathParts.length > 0) {
+            const cleanPart = pathParts[0].split("?")[0];
+            return "@" + cleanPart;
+          }
+          return "Instagram";
+        }
+      } catch (e) {}
+      return input.startsWith("@") ? input : "@" + input;
+    }
+
+    function getFacebookLabel(input) {
+      if (!input) return "";
+      if (input.includes("HI-TECH-GOLD-AND-DIAMOND") || input.includes("100067775102269")) {
+        return "Hi-Tech Gold & Diamond";
+      }
+      try {
+        if (input.startsWith("http")) {
+          const url = new URL(input);
+          const pathParts = url.pathname.split("/").filter(Boolean);
+          if (pathParts.length > 0) {
+            if (pathParts[0] === 'p' && pathParts.length > 1) {
+              return pathParts[1].replace(/-/g, ' ');
+            }
+            return pathParts[0].replace(/-/g, ' ');
+          }
+          return "Facebook";
+        }
+      } catch (e) {}
+      return "Facebook Page";
+    }
+
     Promise.all([
       fetch("/api/offers").then(res => res.json()),
       fetch("/api/contact").then(res => res.json()).catch(() => null)

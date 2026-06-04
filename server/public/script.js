@@ -316,17 +316,138 @@ Promise.all([
 .catch(err => console.error("Error loading homepage sliders/tagline:", err));
 
 /* FOOTER CONTACT DETAILS */
+function getInstagramLabel(input) {
+  if (!input) return "";
+  try {
+    if (input.startsWith("http")) {
+      const url = new URL(input);
+      const pathParts = url.pathname.split("/").filter(Boolean);
+      if (pathParts.length > 0) {
+        const cleanPart = pathParts[0].split("?")[0];
+        return "@" + cleanPart;
+      }
+      return "Instagram";
+    }
+  } catch (e) {}
+  return input.startsWith("@") ? input : "@" + input;
+}
+
+function getFacebookLabel(input) {
+  if (!input) return "";
+  if (input.includes("HI-TECH-GOLD-AND-DIAMOND") || input.includes("100067775102269")) {
+    return "Hi-Tech Gold & Diamond";
+  }
+  try {
+    if (input.startsWith("http")) {
+      const url = new URL(input);
+      const pathParts = url.pathname.split("/").filter(Boolean);
+      if (pathParts.length > 0) {
+        if (pathParts[0] === 'p' && pathParts.length > 1) {
+          return pathParts[1].replace(/-/g, ' ');
+        }
+        return pathParts[0].replace(/-/g, ' ');
+      }
+      return "Facebook";
+    }
+  } catch (e) {}
+  return "Facebook Page";
+}
+
 fetch("/api/contact")
   .then(res => res.json())
   .then(contact => {
     if (contact) {
+      // 1. Address
       const footerAddr = document.getElementById("footerAddress");
-      const footerPh = document.getElementById("footerPhone");
       if (footerAddr && contact.address) {
         footerAddr.innerText = contact.address;
       }
-      if (footerPh && contact.phone) {
-        footerPh.innerText = contact.phone;
+
+      // 2. Phones list with Icons
+      const phonesList = document.getElementById("footerPhonesList");
+      if (phonesList) {
+        phonesList.innerHTML = "";
+        const phones = [contact.phone, contact.phone2, contact.phone3, contact.phone4].filter(Boolean);
+        phones.forEach(ph => {
+          phonesList.innerHTML += `
+            <p class="footer-phone-item">
+              <a href="tel:${ph.replace(/\s+/g, '')}">
+                <svg class="footer-icon icon-phone" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px; vertical-align:middle; color:var(--gold-soft);"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                <span>${ph}</span>
+              </a>
+            </p>
+          `;
+        });
+      }
+
+      // 3. WhatsApp list with Icons
+      const waList = document.getElementById("footerWhatsAppList");
+      if (waList) {
+        waList.innerHTML = "";
+        const was = [
+          { label: "Sales Inquiry 1", value: contact.whatsapp },
+          { label: "Sales Inquiry 2", value: contact.whatsapp2 }
+        ].filter(item => item.value);
+
+        was.forEach((wa, index) => {
+          const cleanNum = wa.value.replace(/\D/g, '');
+          const displayLabel = wa.value.startsWith("+") ? wa.value : "+" + wa.value;
+          waList.innerHTML += `
+            <p class="footer-wa-item">
+              <a href="https://wa.me/${cleanNum}" target="_blank" class="footer-link-wa">
+                <svg class="footer-icon icon-wa" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="margin-right:8px; vertical-align:middle; color:#25D366;"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.502-5.724-1.457L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.625 1.45 5.489 0 9.953-4.467 9.957-9.96.002-2.661-1.034-5.159-2.92-7.047C16.426 1.709 13.924.67 11.265.67c-5.489 0-9.956 4.47-9.96 9.963-.001 1.543.41 3.048 1.192 4.385l-.994 3.63 3.72-.975zm10.741-6.974c-.29-.145-1.714-.847-1.98-.943-.264-.097-.457-.145-.648.145-.192.29-.745.944-.913 1.137-.168.194-.336.218-.626.073-.29-.145-1.223-.45-2.33-1.439-.861-.768-1.442-1.716-1.611-2.007-.169-.29-.018-.446.126-.59.13-.13.29-.336.436-.505.145-.168.193-.29.29-.482.096-.193.048-.362-.024-.506-.073-.145-.648-1.56-.888-2.14-.233-.56-.47-.482-.648-.492-.167-.008-.36-.01-.55-.01s-.502.072-.765.358c-.264.286-1.008.985-1.008 2.4 0 1.416 1.031 2.784 1.176 2.977.144.192 2.029 3.1 4.914 4.343.686.296 1.22.473 1.637.606.69.22 1.319.19 1.815.115.553-.083 1.714-.7 1.956-1.378.242-.676.242-1.258.17-1.379-.073-.122-.265-.193-.554-.338z"/></svg>
+                <span>WhatsApp ${index + 1} (${displayLabel})</span>
+              </a>
+            </p>
+          `;
+        });
+      }
+
+      // 4. Socials & Email with Icons
+      const socialsList = document.getElementById("footerSocialsList");
+      if (socialsList) {
+        socialsList.innerHTML = "";
+        
+        if (contact.instagram) {
+          const igUrl = contact.instagram.startsWith("http") ? contact.instagram : `https://instagram.com/${contact.instagram}`;
+          const igLabel = getInstagramLabel(contact.instagram);
+          socialsList.innerHTML += `
+            <p class="footer-social-item">
+              <a href="${igUrl}" target="_blank" class="footer-link-ig" style="color:#FFFCFC;">
+                <svg class="footer-icon icon-ig" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px; vertical-align:middle; color:#E1306C;"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                <span>${igLabel}</span>
+              </a>
+            </p>
+          `;
+        }
+        
+        if (contact.facebook) {
+          const fbUrl = contact.facebook.startsWith("http") ? contact.facebook : `https://facebook.com/${contact.facebook}`;
+          const fbLabel = getFacebookLabel(contact.facebook);
+          socialsList.innerHTML += `
+            <p class="footer-social-item">
+              <a href="${fbUrl}" target="_blank" class="footer-link-fb" style="color:#FFFCFC;">
+                <svg class="footer-icon icon-fb" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px; vertical-align:middle; color:#1877F2;"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+                <span>${fbLabel}</span>
+              </a>
+            </p>
+          `;
+        }
+        
+        if (contact.email) {
+          socialsList.innerHTML += `
+            <p class="footer-social-item">
+              <a href="mailto:${contact.email}" class="footer-link-email">
+                <svg class="footer-icon icon-email" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px; vertical-align:middle; color:var(--gold-soft);"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                <span>${contact.email}</span>
+              </a>
+            </p>
+          `;
+        }
+        
+        if (socialsList.innerHTML === "") {
+          socialsList.innerHTML = "<p style='color:#bbb; font-style:italic;'>No social links set.</p>";
+        }
       }
     }
   })
