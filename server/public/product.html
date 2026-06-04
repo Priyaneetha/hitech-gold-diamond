@@ -85,7 +85,12 @@
     <div class="footer-col footer-brand-col">
       <h3>Hi-Tech Gold & Diamonds</h3>
       <p class="footer-desc">Crafted in Gold. Defined by Elegance. Your trusted destination for BIS 916 Hallmark jewelry.</p>
-      <p id="footerAddress" class="footer-address">Kuttiadi, Kerala, India</p>
+      <p id="footerAddress" class="footer-address">
+        <a href="https://maps.google.com/?q=Hi-Tech+Gold+Kuttiyadi" target="_blank" style="color:var(--white); text-decoration:none; display:inline-flex; align-items:center; gap:6px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; color:var(--gold-soft);"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+          <span>Kuttiadi, Kerala, India</span>
+        </a>
+      </p>
     </div>
     
     <div class="footer-col">
@@ -201,7 +206,15 @@
 
       // Update footer contact
       const footerAddr = document.getElementById("footerAddress");
-      if (footerAddr && shopContact.address) footerAddr.innerText = shopContact.address;
+      if (footerAddr && shopContact.address) {
+        const mapUrl = shopContact.mapLink || "https://maps.google.com/?q=Hi-Tech+Gold+Kuttiyadi";
+        footerAddr.innerHTML = `
+          <a href="${mapUrl}" target="_blank" style="color:var(--white); text-decoration:none; display:inline-flex; align-items:center; gap:6px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; color:var(--gold-soft);"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+            <span>${shopContact.address}</span>
+          </a>
+        `;
+      }
 
       const phonesList = document.getElementById("footerPhonesList");
       if (phonesList) {

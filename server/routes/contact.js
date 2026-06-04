@@ -13,7 +13,7 @@ router.post("/", isAdmin, async (req, res, next) => {
       phone, phone2, phone3, phone4, 
       whatsapp, whatsapp2, 
       instagram, facebook, email, 
-      address 
+      address, mapLink
     } = req.body;
 
     const cleanPhone = (phone || "").trim();
@@ -26,6 +26,7 @@ router.post("/", isAdmin, async (req, res, next) => {
     const cleanFacebook = (facebook || "").trim();
     const cleanEmail = (email || "").trim();
     const cleanAddress = (address || "").trim();
+    const cleanMapLink = (mapLink || "").trim();
 
     if (!cleanPhone || !cleanWhatsapp || !cleanAddress) {
       return res.status(400).json({ message: "Primary Phone, Primary WhatsApp, and Address are required." });
@@ -43,6 +44,7 @@ router.post("/", isAdmin, async (req, res, next) => {
       demoDb.contact.facebook = cleanFacebook;
       demoDb.contact.email = cleanEmail;
       demoDb.contact.address = cleanAddress;
+      demoDb.contact.mapLink = cleanMapLink;
       return res.send("Contact details updated");
     }
 
@@ -59,7 +61,8 @@ router.post("/", isAdmin, async (req, res, next) => {
         instagram: cleanInstagram, 
         facebook: cleanFacebook, 
         email: cleanEmail,
-        address: cleanAddress, 
+        address: cleanAddress,
+        mapLink: cleanMapLink,
         active: true 
       },
       { upsert: true, new: true, setDefaultsOnInsert: true }
@@ -91,7 +94,8 @@ router.get("/", async (req, res, next) => {
       instagram: (contact && contact.instagram && contact.instagram.trim()) || demoDb.contact.instagram,
       facebook: (contact && contact.facebook && contact.facebook.trim()) || demoDb.contact.facebook,
       email: (contact && contact.email && contact.email.trim()) || demoDb.contact.email,
-      address: (contact && contact.address && contact.address.trim()) || demoDb.contact.address
+      address: (contact && contact.address && contact.address.trim()) || demoDb.contact.address,
+      mapLink: (contact && contact.mapLink && contact.mapLink.trim()) || demoDb.contact.mapLink
     };
     
     res.json(responseData);

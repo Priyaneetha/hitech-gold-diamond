@@ -19,6 +19,7 @@ const demoDb = {
     facebook: "https://www.facebook.com/p/HI-TECH-GOLD-AND-DIAMOND-100067775102269/",
     email: "hitechgoldanddiamonds@gmail.com",
     address: "Kuttiadi, Kerala, India",
+    mapLink: "https://maps.google.com/?q=Hi-Tech+Gold+Kuttiyadi",
     active: true
   },
   categories: [

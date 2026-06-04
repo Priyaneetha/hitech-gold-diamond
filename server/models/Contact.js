@@ -44,6 +44,10 @@ const contactSchema = new mongoose.Schema({
     required: true,
     default: "Kuttiadi, Kerala, India"
   },
+  mapLink: {
+    type: String,
+    default: "https://maps.google.com/?q=Hi-Tech+Gold+Kuttiyadi"
+  },
   active: {
     type: Boolean,
     default: true

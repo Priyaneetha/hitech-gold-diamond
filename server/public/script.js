@@ -360,7 +360,13 @@ fetch("/api/contact")
       // 1. Address
       const footerAddr = document.getElementById("footerAddress");
       if (footerAddr && contact.address) {
-        footerAddr.innerText = contact.address;
+        const mapUrl = contact.mapLink || "https://maps.google.com/?q=Hi-Tech+Gold+Kuttiyadi";
+        footerAddr.innerHTML = `
+          <a href="${mapUrl}" target="_blank" style="color:var(--white); text-decoration:none; display:inline-flex; align-items:center; gap:6px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; color:var(--gold-soft);"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+            <span>${contact.address}</span>
+          </a>
+        `;
       }
 
       // 2. Phones list with Icons

@@ -501,6 +501,7 @@ function loadContact() {
         document.getElementById("contactFacebook").value = data.facebook || "";
         document.getElementById("contactEmail").value = data.email || "";
         document.getElementById("contactAddress").value = data.address || "";
+        document.getElementById("contactMapLink").value = data.mapLink || "";
       }
     })
     .catch(err => console.error("Error loading contact details:", err));
@@ -517,6 +518,7 @@ function updateContact() {
   const facebook = document.getElementById("contactFacebook").value.trim();
   const email = document.getElementById("contactEmail").value.trim();
   const address = document.getElementById("contactAddress").value.trim();
+  const mapLink = document.getElementById("contactMapLink").value.trim();
 
   if (!phone || !whatsapp || !address) {
     alert("Primary Phone, Primary WhatsApp, and Address are required.");
@@ -530,7 +532,7 @@ function updateContact() {
       phone, phone2, phone3, phone4,
       whatsapp, whatsapp2,
       instagram, facebook, email,
-      address 
+      address, mapLink
     })
   })
   .then(res => {
